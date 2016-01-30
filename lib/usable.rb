@@ -1,3 +1,4 @@
+require "ostruct"
 require "usable/version"
 
 module Usable
