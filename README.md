@@ -2,8 +2,6 @@
 
 Rack style mixins for Ruby objects. Mount your modules like you mean it!
 
-## Usage
-
 ```ruby
 module Versionable
   def versions
