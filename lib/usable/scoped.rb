@@ -1,3 +1,4 @@
+# @note UNTESTED and not included by default
 module Usable
   class Scoped
     module Configurable
@@ -23,7 +24,7 @@ module Usable
   end
 end
 
-# @description TEST CASE
+# but here's a example of how to use it
 =begin
   module Versionable
     def versions
