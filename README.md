@@ -3,14 +3,14 @@
 Rack style mixins for Ruby objects. Mount your modules like you mean it!
 
 ```ruby
-module Versionable
-  def versions
-    "Saving #{self.class.config.max_versions} versions to #{self.class.config.table_name}"
-  end
-end
-
 class Model
   extend Usable
+  
+  module Versionable
+    def versions
+      "Saving #{self.class.config.max_versions} versions to #{self.class.config.table_name}"
+    end
+  end
 
   # with options hash
   use Versionable, table_name: 'custom_versions'
