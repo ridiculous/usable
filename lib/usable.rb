@@ -9,10 +9,9 @@ module Usable
   alias_method :config, :usable_config unless method_defined?(:config)
 
   def usable(mod, options = {})
+    options.each { |k, v| usable_config.public_send "#{k}=", v }
     if block_given?
       yield usable_config
-    else
-      options.each { |k, v| usable_config.public_send "#{k}=", v }
     end
     wrapped_mod = spec(mod).dup
     wrapped_mod.prepend build_null_mod(wrapped_mod)
@@ -35,11 +34,11 @@ module Usable
   end
 
   def has_spec?(mod)
-    !!spec(mod)
+    mod.const_defined?(:Spec)
   end
 
   def spec(mod)
-    if mod.const_defined?(:Spec)
+    if has_spec?(mod)
       mod.const_get(:Spec)
     else
       mod

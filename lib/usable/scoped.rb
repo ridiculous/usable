@@ -13,7 +13,7 @@ module Usable
       base.extend Configurable
     end
 
-    def use(mod, options = {})
+    def usable(mod, options = {})
       send :include, mod unless self < mod
       if block_given?
         yield configs[mod]
@@ -42,12 +42,12 @@ end
     extend Usable::Scoped
 
   # with options hash
-    use Versionable, table_name: 'custom_versions'
+    usable Versionable, table_name: 'custom_versions'
   # or with block
-    use Versionable do |config|
+    usable Versionable do |config|
       config.max_versions = 10
     end
-    use Notable do |config|
+    usable Notable do |config|
       config.max_versions = 20
       config.table_name = 'custom_notes'
     end
