@@ -7,13 +7,17 @@ class Model
   extend Usable
   
   module Versionable
+    def not_defined_on_parent
+        puts 'should be nil'
+    end
+    
     def versions
       "Saving #{self.class.config.max_versions} versions to #{self.class.config.table_name}"
     end
   end
 
   # with options hash
-  use Versionable, table_name: 'custom_versions'
+  use Versionable, table_name: 'custom_versions', only: :versions
 
   # or with block
   use Versionable do |config|
