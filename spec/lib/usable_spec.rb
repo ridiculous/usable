@@ -17,27 +17,18 @@ describe Usable do
     end
   end
 
-  describe "#use" do
+  describe "#usable" do
     context "unless (self < mod)" do
       it "calls :send with :include and -mod-" do
-        expect(subject).to receive(:include).with(mod)
-        subject.use mod
-      end
-    end
-
-    context "when (self < mod)" do
-      before { subject.use mod }
-
-      it "doesn't call :send" do
-        expect(subject).to_not receive(:include)
-        subject.use mod
+        expect(subject).to receive(:include).with(instance_of(Module))
+        subject.usable mod
       end
     end
 
     context "when block_given?" do
       it "yields @config to the given block" do
         expect {
-          subject.use mod do |config|
+          subject.usable mod do |config|
             config.max_versions = 10
           end
         }.to change(subject.config, :max_versions).from(nil).to(10)
@@ -47,7 +38,7 @@ describe Usable do
     context "not block_given? we assume it's a hash" do
       it "assign the values to @config" do
         expect {
-          subject.use Versionable, table_name: 'custom'
+          subject.usable Versionable, table_name: 'custom'
         }.to change(subject.config, :table_name).from(nil).to('custom')
       end
     end

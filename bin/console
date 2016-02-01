@@ -10,5 +10,25 @@ require "usable"
 # require "pry"
 # Pry.start
 
+module VersionKit
+  def save_version
+    "Saving up to #{self.class.config.max_versions} versions to #{self.class.config.table_name}"
+  end
+
+  def destroy_version
+    "Deleting versions from #{self.class.config.table_name}"
+  end
+end
+
+class Model
+  extend Usable
+
+  usable VersionKit, only: :save_version do |config|
+    config.max_versions = 10
+    config.table_name = 'custom_versions'
+  end
+end
+
 require "irb"
+
 IRB.start
