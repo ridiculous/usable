@@ -82,6 +82,7 @@ describe Usable do
       it 'defines the specified method' do
         subject.usable mod, only: :destroy_version
         expect(subject.new.destroy_version).to eq "destroying version"
+        expect(subject.new.versions).to be_nil
       end
 
       it 'defines the specified methods' do
@@ -105,6 +106,15 @@ describe Usable do
         after do
           mod.send :remove_const, :Spec
           mod.send :remove_const, :ClassMethods
+        end
+
+        context 'when the :only option is in effect' do
+          it 'stubs out all but the methods specified except for those on the parent module' do
+            subject.usable mod, only: :destroy_version
+            expect(subject.new.update_version).to be_nil
+            expect(subject.new.versions).to_not be_nil
+            expect(subject.new.latest_version).to eq "here i am"
+          end
         end
 
         it 'defines methods on from the spec on the target class' do

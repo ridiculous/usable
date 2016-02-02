@@ -1,26 +1,24 @@
 module Usable
   class ModExtender
-    attr_accessor :mod, :copy, :options
+    attr_accessor :copy, :mod, :config
 
     def initialize(mod, config = OpenStruct.new)
       @mod = mod
-      @copy = mod.dup
+      @copy = has_spec? ? mod.const_get(:Spec).dup : mod.dup
       @config = config
-      @unwanted = config.only ? mod.instance_methods - Array(config.only) : []
+    end
+
+    def call
+      copy.prepend override
     end
 
     def override
-      unwanted = @unwanted
+      unwanted = config.only ? copy.instance_methods - Array(config.only) : []
       Module.new do
         unwanted.each do |method_name|
           define_method(method_name) { |*| }
         end
       end
-    end
-
-    def to_spec
-      mod_spec = has_spec? ? mod.const_get(:Spec).dup : copy
-      mod_spec.prepend override
     end
 
     def has_spec?

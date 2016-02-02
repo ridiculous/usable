@@ -30,7 +30,7 @@ module Usable
     options.each { |k, v| usable_config.public_send "#{k}=", v }
     yield usable_config if block_given?
     mod_ext = ModExtender.new mod, usable_config
-    usable! mod_ext.to_spec
+    usable! mod_ext.call
     usable! mod if mod_ext.has_spec?
   end
 
