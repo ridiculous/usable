@@ -1,61 +1,42 @@
 require "ostruct"
+require "delegate"
 require "usable/version"
 
 module Usable
+
+  autoload :ModExtender, 'usable/mod_extender'
+  autoload :Config, 'usable/config'
+
   def usable_config
     @usable_config ||= Config.new
   end
+  attr_writer :usable_config
 
-  alias_method :config, :usable_config unless method_defined?(:config)
-
+  # @description Configures the +available_methods+ of a module using the given options or block and then includes it on
+  #   the target class. Checks if there is a module named Spec within the given mods namespace and uses the instance of
+  #   methods of that as the +available_methods+
+  #
+  # @example
+  #
+  #   class Example
+  #     extend Usable
+  #     usable VersionKit, only: :save_version
+  #   end
+  #
+  # @note Hides methods
+  # @note We include the primary mod when there is a Spec set because any instance method defined on the mod are not
+  #   configurable and should therefore takes precedence over those defined in the Spec
   def usable(mod, options = {})
     options.each { |k, v| usable_config.public_send "#{k}=", v }
-    if block_given?
-      yield usable_config
-    end
-    wrapped_mod = spec(mod).dup
-    wrapped_mod.prepend build_null_mod(wrapped_mod)
-    usable_config.modules[mod] = wrapped_mod
-    if has_spec?(mod)
-      send :include, mod
-    else
-      send :include, usable_config.modules[mod]
-    end
+    yield usable_config if block_given?
+    mod_ext = ModExtender.new mod, usable_config
+    usable! mod_ext.to_spec
+    usable! mod if mod_ext.has_spec?
   end
 
-  # @description Stub out any "unwanted" methods
-  def build_null_mod(mod)
-    unwanted = usable_config.only ? mod.instance_methods - Array(usable_config.only) : []
-    Module.new do
-      unwanted.each do |method_name|
-        define_method(method_name) { |*| }
-      end
-    end
-  end
-
-  def has_spec?(mod)
-    mod.const_defined?(:Spec)
-  end
-
-  def spec(mod)
-    if has_spec?(mod)
-      mod.const_get(:Spec)
-    else
-      mod
-    end
-  end
-
-  class Config < OpenStruct
-    def available_methods
-      modules.each_with_object({}) do |(_, mod_copy), result|
-        mod_copy.instance_methods.each do |method_name|
-          result[method_name] = mod_copy.instance_method method_name
-        end
-      end
-    end
-
-    def modules
-      @modules ||= {}
-    end
+  # @description Directly include a module whose methods you want made available in +usable_config.available_methods+
+  def usable!(mod)
+    usable_config.modules << mod
+    send :include, mod
   end
 end
