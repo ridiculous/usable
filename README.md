@@ -26,8 +26,8 @@ end
 => "custom_versions"
 >> Model.new.versions      
 => "Saving up to 10 versions to custom_versions"
->> Model.new.destroy_version     
-=> nil
+>> Model.new.respond_to? :destroy_version     
+=> false
 ```
 You can also define a custom module within the "usable" module that defines the methods which can be configured to be
 extended or excluded. The module must be named "Spec" and be defined one level inside the namespace. For example:

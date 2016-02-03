@@ -8,16 +8,16 @@ module Usable
       @config = config
     end
 
+    # @note Destructive
     def call
-      copy.prepend override
+      override
+      copy
     end
 
     def override
       unwanted = config.only ? copy.instance_methods - Array(config.only) : []
-      Module.new do
-        unwanted.each do |method_name|
-          define_method(method_name) { |*| }
-        end
+      unwanted.each do |method_name|
+        copy.send :remove_method, method_name
       end
     end
 
