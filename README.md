@@ -5,11 +5,11 @@ Rack style mixins for Ruby objects. Mount your modules like you mean it!
 ```ruby
 module VersionKit
   def save_version
-    "Saving up to #{self.class.config.max_versions} versions to #{self.class.config.table_name}"
+    "Saving up to #{self.class.usable_config.max_versions} versions to #{self.class.usable_config.table_name}"
   end
 
   def destroy_version
-    "Deleting versions from #{self.class.config.table_name}"
+    "Deleting versions from #{self.class.usable_config.table_name}"
   end
 end
   
@@ -22,9 +22,9 @@ class Model
   end
 end
 
->> Model.config.table_name
+>> Model.usable_config.table_name
 => "custom_versions"
->> Model.new.versions      
+>> Model.new.save_version
 => "Saving up to 10 versions to custom_versions"
 >> Model.new.respond_to? :destroy_version     
 => false
