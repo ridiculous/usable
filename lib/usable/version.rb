@@ -1,3 +1,3 @@
 module Usable
-  VERSION = "0.3.0".freeze
+  VERSION = "1.0.0".freeze
 end
