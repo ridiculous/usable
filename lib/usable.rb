@@ -13,7 +13,7 @@ module Usable
   attr_writer :usable_config
 
   # @description Configures the +available_methods+ of a module using the given options or block and then includes it on
-  #   the target class. Checks if there is a module named Spec within the given mods namespace and uses the instance of
+  #   the target class. Checks if there is a module named UsableSpec within the given mods namespace and uses the instance of
   #   methods of that as the +available_methods+
   #
   # @example
@@ -24,8 +24,8 @@ module Usable
   #   end
   #
   # @note Hides methods
-  # @note We include the primary mod when there is a Spec set because any instance method defined on the mod are not
-  #   configurable and should therefore takes precedence over those defined in the Spec
+  # @note We include the primary mod when there is a UsableSpec set because any instance method defined on the mod are not
+  #   configurable and should therefore takes precedence over those defined in the UsableSpec
   def usable(mod, options = {})
     options.each { |k, v| usable_config.public_send "#{k}=", v }
     yield usable_config if block_given?

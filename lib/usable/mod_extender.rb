@@ -4,7 +4,7 @@ module Usable
 
     def initialize(mod, config = OpenStruct.new)
       @mod = mod
-      @copy = has_spec? ? mod.const_get(:Spec).dup : mod.dup
+      @copy = has_spec? ? mod.const_get(:UsableSpec).dup : mod.dup
       @config = config
     end
 
@@ -22,7 +22,7 @@ module Usable
     end
 
     def has_spec?
-      mod.const_defined?(:Spec)
+      mod.const_defined?(:UsableSpec)
     end
   end
 end

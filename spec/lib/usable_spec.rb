@@ -97,14 +97,14 @@ describe Usable do
         expect(subject.new).to_not respond_to :versions
       end
 
-      context 'when the given module has a Spec defined' do
+      context 'when the given module has a UsableSpec defined' do
         before do
-          mod.const_set :Spec, spec_mod
+          mod.const_set :UsableSpec, spec_mod
           mod.const_set :ClassMethods, class_mod
         end
 
         after do
-          mod.send :remove_const, :Spec
+          mod.send :remove_const, :UsableSpec
           mod.send :remove_const, :ClassMethods
         end
 
@@ -145,11 +145,11 @@ describe Usable do
       expect(subject.usable_config.available_methods[:destroy_version]).to be_kind_of UnboundMethod
     end
 
-    context 'when a Spec is defined' do
-      before { mod.const_set :Spec, class_mod }
-      after { mod.send :remove_const, :Spec }
+    context 'when a UsableSpec is defined' do
+      before { mod.const_set :UsableSpec, class_mod }
+      after { mod.send :remove_const, :UsableSpec }
 
-      it 'adds the methods from the Spec' do
+      it 'adds the methods from the UsableSpec' do
         subject.usable mod
         expect(subject.usable_config.available_methods.keys.sort).to eq [:destroy_version, :from_class_mod, :latest_version, :versions]
         expect(subject.usable_config.available_methods).to include(:from_class_mod)

@@ -30,11 +30,11 @@ end
 => false
 ```
 You can also define a custom module within the "usable" module that defines the methods which can be configured to be
-extended or excluded. The module must be named "Spec" and be defined one level inside the namespace. For example:
+extended or excluded. The module must be named "UsableSpec" and be defined one level inside the namespace. For example:
 
 ```ruby
 module VersionKit
-  module Spec
+  module UsableSpec
     def version
       "spec version included"
     end
