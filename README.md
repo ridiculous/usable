@@ -42,7 +42,7 @@ to a method all time doesn't produce very [confident code](http://www.confidentr
 to reference methods through the `Model.usable_config.available_methods` hash. This way you can confidently call methods,
 just don't rely on the return value, because methods that are removed via `:only` will return `nil`.
 
-## Seperate included module from configurable methods
+## Separate included module from configurable methods
 
 Sometimes you want to define methods on the module but not have them be configurable. Define a module within the usable 
 module namespace and name it `UsableSpec`, and `Usable` will use that module to configure the available methods. Any naming
