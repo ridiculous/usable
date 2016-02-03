@@ -26,22 +26,36 @@ end
 => "custom_versions"
 >> Model.new.save_version
 => "Saving up to 10 versions to custom_versions"
+>> Model.usable_config.available_methods[:save_version].bind(self).call
+=> "Saving up to 10 versions to custom_versions"
 >> Model.new.respond_to? :destroy_version     
 => false
+>> Model.usable_config.available_methods[:destroy_version].bind(self).call
+=> nil
 ```
-You can also define a custom module within the "usable" module that defines the methods which can be configured to be
-extended or excluded. The module must be named "UsableSpec" and be defined one level inside the namespace. For example:
+What's going on here? Well `#save_versions` is now extended onto the `Model` class, but `#destroy_version` is not!
+
+## But wait, you undefined my methods?
+
+Yes. Well ... yes, at least on the copy of the module included in the target class. But, checking if an object responds
+to a method all time doesn't produce very [confident code](http://www.confidentruby.com/). That's why it is encouraged
+to reference methods through the `Model.usable_config.available_methods` hash. This way you can confidently call methods,
+just don't rely on the return value! Methods that are removed via `:only` will return `nil`.
+
+## Seperate included module from configurable methods
+
+Sometimes you want to define methods on the module but not have them be configurable. Define a module within the usable 
+module namespace and name it `UsableSpec`, and `Usable` will use that module to configure the available methods. Any naming
+conflicts will be resolved by giving precedence to the parent module.
+
+For example:
 
 ```ruby
 module VersionKit
   module UsableSpec
     def version
-      "spec version included"
+      "yo"
     end
-  end
-  
-  def version
-    "this version not included"
   end
   
   def self.included(base)
@@ -52,8 +66,10 @@ end
 >> Example = Class.new.extend Usable
 => Example
 >> Example.usable VersionKit
-spec version included
+yo
 => Example
+>> Example.new.version
+=> "yo"
 ```
 
 ## Installation
