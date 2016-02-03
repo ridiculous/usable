@@ -40,7 +40,7 @@ What's going on here? Well `#save_versions` is now extended onto the `Model` cla
 Yes. Well ... yes, at least on the copy of the module included in the target class. But, checking if an object responds
 to a method all time doesn't produce very [confident code](http://www.confidentruby.com/). That's why it is encouraged
 to reference methods through the `Model.usable_config.available_methods` hash. This way you can confidently call methods,
-just don't rely on the return value! Methods that are removed via `:only` will return `nil`.
+just don't rely on the return value, because methods that are removed via `:only` will return `nil`.
 
 ## Seperate included module from configurable methods
 
