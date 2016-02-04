@@ -22,7 +22,7 @@ describe Usable::Config do
 
     context 'when the method is found' do
       before do
-        subject.modules << mod
+        subject.add_module mod
       end
 
       it 'returns an object we can #bind and #call' do
