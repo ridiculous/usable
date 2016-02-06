@@ -9,9 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Ryan Buckley"]
   spec.email         = ["arebuckley@gmail.com"]
 
-  spec.summary       = %q{Rack style mixins}
-  spec.description   = %q{Rack style mixins which provide a convention for passing options to your modules.}
+  spec.summary       = %q{Mounts and configures modules}
+  spec.description   = %q{A simple way to mount and configure your modules. Usable gives you control over which methods are included.}
   spec.homepage      = "https://github.com/ridiculous/usable"
+  spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"

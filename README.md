@@ -1,6 +1,7 @@
 # Usable
 
-Rack style mixins for Ruby objects. Mount your modules like you mean it!
+A simple way to mount and configure your modules. Usable gives you control over which methods are included, and the class
+level config provides a safe interface for calling them.
 
 ```ruby
 module VersionKit
