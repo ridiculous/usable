@@ -1,4 +1,4 @@
-# Usable
+# Usable [![Gem Version](https://badge.fury.io/rb/usable.svg)](http://badge.fury.io/rb/usable)
 
 A simple way to mount and configure your modules. Usable gives you control over which methods are included, and the class
 level config provides a safe interface for calling them.
