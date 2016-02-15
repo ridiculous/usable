@@ -157,4 +157,27 @@ describe Usable do
     end
   end
 
+  describe 'assigning names to usable mods' do
+    before { Kernel.const_set :UsableSubject, subject }
+    after { Kernel.send :remove_const, :UsableSubject }
+
+    context 'when given the module is anonymous' do
+      it 'generates a name using a timestamp' do
+        subject.usable mod
+        expect(subject.ancestors[0]).to eq UsableSubject
+        expect(subject.ancestors[1].to_s).to match /UsableSubject::UsableMod\d{10}Used/
+      end
+    end
+
+    context 'when given the module has a name' do
+      before { Kernel.const_set :SomeMod, mod }
+      after { Kernel.send :remove_const, :SomeMod }
+
+      it 'appends "Used" to the module name' do
+        subject.usable mod
+        expect(subject.ancestors[1]).to eq UsableSubject::SomeModUsed
+      end
+    end
+  end
+
 end
