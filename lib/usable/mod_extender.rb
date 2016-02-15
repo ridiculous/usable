@@ -5,8 +5,13 @@ module Usable
 
     def initialize(mod, config = OpenStruct.new)
       @mod = mod
-      @name = mod.name
-      @copy = has_spec? ? mod.const_get(:UsableSpec).dup : mod.dup
+      if has_spec?
+        @copy = mod.const_get(:UsableSpec).dup
+        @name = "#{mod.name}UsableSpec"
+      else
+        @copy =  mod.dup
+        @name = mod.name
+      end
       @config = config
     end
 

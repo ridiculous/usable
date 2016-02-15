@@ -158,25 +158,48 @@ describe Usable do
   end
 
   describe 'assigning names to usable mods' do
-    before { Kernel.const_set :UsableSubject, subject }
-    after { Kernel.send :remove_const, :UsableSubject }
+    before { Object.const_set :UsableSubject, subject }
+    after { Object.send :remove_const, :UsableSubject }
 
     context 'when given the module is anonymous' do
       it 'generates a name using a timestamp' do
-        subject.usable mod
-        expect(subject.ancestors[0]).to eq UsableSubject
-        expect(subject.ancestors[1].to_s).to match /UsableSubject::UsableMod\d{10}Used/
+        expect {
+          subject.usable mod
+        }.to change { ancestors }.to include 'UsableSubject'
+        expect(ancestors[1].to_s).to match /UsableSubject::UsableMod\d{10}Used/
       end
     end
 
     context 'when given the module has a name' do
-      before { Kernel.const_set :SomeMod, mod }
-      after { Kernel.send :remove_const, :SomeMod }
+      before { UsableSubject.const_set :SomeMod, mod }
+      after { UsableSubject.send :remove_const, :SomeMod }
 
       it 'appends "Used" to the module name' do
-        subject.usable mod
-        expect(subject.ancestors[1]).to eq UsableSubject::SomeModUsed
+        expect {
+          subject.usable mod
+        }.to change { ancestors }.to include 'UsableSubject::SomeModUsed'
+        assert_index_of_mod 'UsableSubject::SomeModUsed', 1
       end
+
+      context 'when the module has a "UsableSpec" defined' do
+        before { UsableSubject::SomeMod.const_set :UsableSpec, spec_mod }
+        after { UsableSubject::SomeMod.send :remove_const, :UsableSpec }
+
+        it 'appends "UsableSpec" to the spec that was used' do
+          expect {
+            subject.usable mod
+          }.to change { ancestors }.to include 'UsableSubject::SomeModUsableSpecUsed'
+          assert_index_of_mod 'UsableSubject::SomeModUsableSpecUsed', 2
+        end
+      end
+    end
+
+    def assert_index_of_mod(mod_name, expected_index)
+      expect(ancestors.index(mod_name)).to eq expected_index
+    end
+
+    def ancestors
+      subject.ancestors.map(&:to_s)
     end
   end
 
