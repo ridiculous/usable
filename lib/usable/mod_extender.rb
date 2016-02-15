@@ -1,9 +1,11 @@
 module Usable
   class ModExtender
+    attr_reader :name
     attr_accessor :copy, :mod, :config
 
     def initialize(mod, config = OpenStruct.new)
       @mod = mod
+      @name = mod.name
       @copy = has_spec? ? mod.const_get(:UsableSpec).dup : mod.dup
       @config = config
     end

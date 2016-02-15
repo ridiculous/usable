@@ -14,7 +14,7 @@ module Usable
     end
 
     def usable(mod, options = {})
-      send :include, mod unless self < mod
+      send :include, mod
       if block_given?
         yield configs[mod]
       else

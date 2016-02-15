@@ -27,11 +27,11 @@ end
 => "custom_versions"
 >> Model.new.save_version
 => "Saving up to 10 versions to custom_versions"
->> Model.usable_config.available_methods[:save_version].bind(self).call
+>> Model.usable_config.available_methods[:save_version].bind(Model.new).call
 => "Saving up to 10 versions to custom_versions"
 >> Model.new.respond_to? :destroy_version     
 => false
->> Model.usable_config.available_methods[:destroy_version].bind(self).call
+>> Model.usable_config.available_methods[:destroy_version].bind(Model.new).call
 => nil
 ```
 What's going on here? Well `#save_versions` is now extended onto the `Model` class, but `#destroy_version` is not!
