@@ -39,7 +39,7 @@ module Usable
   # @description Directly include a module whose methods you want made available in +usable_config.available_methods+
   #   Gives the module a name when including so that it shows up properly in the list of ancestors
   def usable!(mod)
-    mod_name = mod.name.nil? ? "UsableMod#{Time.now.strftime('%s')}" : mod.name.split('::').last
+    mod_name = mod.name ? mod.name.split('::').last : "UsableMod#{Time.now.strftime('%s')}"
     const_name = "#{mod_name}Used"
     mod = mod.call if mod.respond_to? :call
     remove_const const_name if const_defined? const_name
