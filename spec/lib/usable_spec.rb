@@ -157,39 +157,50 @@ describe Usable do
     end
   end
 
-  describe 'assigning names to usable mods' do
-    before { Object.const_set :UsableSubject, subject }
-    after { Object.send :remove_const, :UsableSubject }
+  describe 'Naming modules' do
+    before { Object.const_set :Subject, subject }
+    after { Object.send :remove_const, :Subject }
 
     context 'when given the module is anonymous' do
       it 'generates a name using a timestamp' do
-        expect {
-          subject.usable mod
-        }.to change { ancestors }.to include 'UsableSubject'
-        expect(ancestors[1].to_s).to match /UsableSubject::UsableMod\d{10}Used/
+        expect(ancestors[1].to_s).to_not match /Subject::UsableMod\d{10}Used/
+        Subject.usable mod
+        expect(ancestors[1].to_s).to match /Subject::UsableMod\d{10}Used/
+      end
+
+      context 'when the test module has defined a constant named "UsableSpec"' do
+        before { mod.const_set :UsableSpec, spec_mod }
+        after { mod.send :remove_const, :UsableSpec }
+
+        it 'uses just "UsableSpec" as the name of the included Spec mod' do
+          expect {
+            Subject.usable mod
+          }.to change { ancestors }.to include 'Subject::UsableSpecUsed'
+          assert_index_of_mod 'Subject::UsableSpecUsed', 2
+        end
       end
     end
 
     context 'when given the module has a name' do
-      before { UsableSubject.const_set :SomeMod, mod }
-      after { UsableSubject.send :remove_const, :SomeMod }
+      before { Object.const_set :TestMod, mod }
+      after { Object.send :remove_const, :TestMod }
 
       it 'appends "Used" to the module name' do
         expect {
-          subject.usable mod
-        }.to change { ancestors }.to include 'UsableSubject::SomeModUsed'
-        assert_index_of_mod 'UsableSubject::SomeModUsed', 1
+          Subject.usable TestMod
+        }.to change { ancestors }.to include 'Subject::TestModUsed'
+        assert_index_of_mod 'Subject::TestModUsed', 1
       end
 
       context 'when the module has a "UsableSpec" defined' do
-        before { UsableSubject::SomeMod.const_set :UsableSpec, spec_mod }
-        after { UsableSubject::SomeMod.send :remove_const, :UsableSpec }
+        before { TestMod.const_set :UsableSpec, spec_mod }
+        after { TestMod.send :remove_const, :UsableSpec }
 
-        it 'appends "UsableSpec" to the spec that was used' do
+        it 'appends "UsableSpec" to the name of the module' do
           expect {
-            subject.usable mod
-          }.to change { ancestors }.to include 'UsableSubject::SomeModUsableSpecUsed'
-          assert_index_of_mod 'UsableSubject::SomeModUsableSpecUsed', 2
+            Subject.usable TestMod
+          }.to change { ancestors }.to include 'Subject::TestModUsableSpecUsed'
+          assert_index_of_mod 'Subject::TestModUsableSpecUsed', 2
         end
       end
     end
@@ -199,7 +210,7 @@ describe Usable do
     end
 
     def ancestors
-      subject.ancestors.map(&:to_s)
+      Subject.ancestors.map(&:to_s)
     end
   end
 
