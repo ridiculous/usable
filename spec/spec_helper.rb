@@ -7,7 +7,11 @@ begin
 rescue LoadError
   nil
 end
-require "byebug"
+begin
+  require "byebug"
+rescue LoadError
+  nil
+end
 
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
