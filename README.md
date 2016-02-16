@@ -36,12 +36,11 @@ end
 ```
 What's going on here? Well `#save_versions` is now extended onto the `Model` class, but `#destroy_version` is not!
 
-## But wait, you undefined my methods?
+## Confidently calling methods
 
-Yes. Well ... yes, at least on the copy of the module included in the target class. But, checking if an object responds
-to a method all time doesn't produce very [confident code](http://www.confidentruby.com/). That's why it is encouraged
-to reference methods through the `Model.usable_config.available_methods` hash. This way you can confidently call methods,
-just don't rely on the return value, because methods that are removed via `:only` will return `nil`.
+We should all be writing [confident code](http://www.confidentruby.com/). That's why it is encouraged
+to reference methods through the `usable_config.available_methods` hash. This way you can confidently call methods! 
+Methods that are specified in the `:only` option, will return `nil` when called.
 
 ## Separate included module from configurable methods
 
@@ -52,6 +51,8 @@ conflicts will be resolved by giving precedence to the parent module.
 For example:
 
 ```ruby
+# ruby -v 2.3.0
+
 module VersionKit
   module UsableSpec
     def version
@@ -72,16 +73,15 @@ module VersionKit
   end
 end
 
->> Example = Class.new.extend Usable
-=> Example
->> Example.usable VersionKit
-yo
-=> Example
->> Example.new.version
-=> "yo"
->> Example.new.name
-=> "yup"
+Example = Class.new.extend Usable
+Example.usable VersionKit
+Example.new.version               # => "yo"
+Example.new.name                  # => "yup"
+Example.ancestors                 # => [Example, VersionKit, Example::VersionKitUsableSpecUsed, Object, Kernel, BasicObject]
 ```
+
+Noticed that Usable assigns the modified module to a constant with the same name as the given module, but with "Used" appended.
+The main module and the spec were both included, but `VersionKit` was not modified, so it didn't need a new name.
 
 ## Installation
 
