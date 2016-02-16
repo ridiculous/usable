@@ -1,11 +1,10 @@
-require "ostruct"
-require "delegate"
-require "usable/version"
+require 'ostruct'
+require 'delegate'
+require 'usable/version'
+require 'usable/mod_extender'
+require 'usable/config'
 
 module Usable
-
-  autoload :ModExtender, 'usable/mod_extender'
-  autoload :Config, 'usable/config'
 
   def usable_config
     @usable_config ||= Config.new
