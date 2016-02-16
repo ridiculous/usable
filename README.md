@@ -1,4 +1,4 @@
-# Usable [![Gem Version](https://badge.fury.io/rb/usable.svg)](http://badge.fury.io/rb/usable) [![Build Status](https://travis-ci.org/ridiculous/usable.svg)](https://travis-ci.org/ridiculous/usable)
+# Usable [![Gem Version](https://badge.fury.io/rb/usable.svg)](http://badge.fury.io/rb/usable) [![Build Status](https://travis-ci.org/ridiculous/usable.svg)](https://travis-ci.org/ridiculous/usable) [![Code Climate](https://codeclimate.com/github/ridiculous/usable/badges/gpa.svg)](https://codeclimate.com/github/ridiculous/usable)
 
 A simple way to mount and configure your modules. Usable gives you control over which methods are included, and a simple
 interface to help you call dynamic methods with confidence.
