@@ -31,13 +31,13 @@ model = Model.new
 model.save_version     # => "Saving up to 10 versions to custom_versions"
 model.destroy_version  # => NoMethodError: undefined method `destroy_version' for #<Model:...
 ```
-You'll notice that `#save_versions` is now included on `Model`, but `#destroy_version` isn't defined.
+`Model` now has a `#save_versions` method but no `#destroy_version` method.
 
 ## Confidently calling methods
 
-We should all be writing [confident code](http://www.confidentruby.com/). That's why it is encouraged
-to reference methods through the `usable_method` class level function. Methods passed in with the `:only` option
-will always return `nil` when called.
+We should all be writing [confident code](http://www.confidentruby.com/), which is why you might want to call configurable
+methods through the `usable_method` class level function. Methods passed in with the `:only` option
+will _always_ return `nil` when called. Thus, the confidence.
 
 Here's the same example as above, rewritten to call methods through the Usable interface:
 
@@ -46,11 +46,11 @@ Model.usable_method(model, :save_version).call    # => "Saving up to 10 versions
 Model.usable_method(model, :destroy_version).call # => nil
 ```
 
-## Separate included module from configurable methods
+## Separate the _included_ module from the _configurable_ methods
 
-Sometimes you want to define methods on the module but not have them be configurable. Define a module within the usable 
-module namespace and name it `UsableSpec`, and `Usable` will use that module to configure the available methods. Any naming
-conflicts will be resolved by giving precedence to the parent module.
+Sometimes you want to define methods on a module and have them always be included. To do this, define a module named 
+`UsableSpec` in the scope of the module you are mounting. `Usable` will detect this and use he "spec" module to configure 
+the available methods. Any naming conflicts will be resolved by giving precedence to the parent module.
 
 For example:
 
@@ -64,7 +64,7 @@ module Mixin
     "always here"
   end
 
-  # @description Usable will apply the :only to just the methods defined by this module
+  # @description Usable will apply the :only option to just the methods defined by this module
   module UsableSpec
     def from_spec
       "can be excluded"
@@ -87,7 +87,7 @@ Example.new.name        # => "defined by Mixin"
 Example.ancestors       # => [Example, Mixin, Example::MixinUsableSpecUsed, Object, Kernel, BasicObject] (ruby -v 2.3.0)
 ```
 
-Noticed that Usable assigns the modified module to a constant with the same name as the given module, but with "Used" appended.
+Notice that Usable assigns the modified module to a constant with the same name as the given module, but with "Used" appended.
 The main module and the spec were both included, but `Mixin` was not modified, so it didn't need a new name.
 
 ## Installation
