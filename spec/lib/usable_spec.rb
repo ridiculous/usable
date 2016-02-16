@@ -214,4 +214,23 @@ describe Usable do
     end
   end
 
+  describe '.usable_method' do
+    it 'returns a method for the given method bound to the given context' do
+      expect(subject.usable_method(subject.new, :latest_version).call).to be nil
+      subject.usable mod
+      expect(subject.usable_method(subject.new, :latest_version)).to be_a(Method)
+      expect(subject.usable_method(subject.new, :latest_version).name).to be :latest_version
+      expect(subject.usable_method(subject.new, :latest_version).call).to eq "here i am"
+    end
+
+    context 'when the method cannot be found' do
+      it 'returns the null method' do
+        subject.usable mod
+        expect(subject.usable_method(subject.new, :foo)).to be_a(Method)
+        expect(subject.usable_method(subject.new, :foo).name).to be :default_method
+        expect(subject.usable_method(subject.new, :foo).call).to be nil
+      end
+    end
+  end
+
 end

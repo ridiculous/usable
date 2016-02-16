@@ -1,10 +1,10 @@
 # Usable [![Gem Version](https://badge.fury.io/rb/usable.svg)](http://badge.fury.io/rb/usable)
 
-A simple way to mount and configure your modules. Usable gives you control over which methods are included, and the class
-level config provides a safe interface for calling them.
+A simple way to mount and configure your modules. Usable gives you control over which methods are included, and a simple
+interface to help you call dynamic methods with confidence.
 
 ```ruby
-module VersionKit
+module VersionMixin
   def save_version
     "Saving up to #{self.class.usable_config.max_versions} versions to #{self.class.usable_config.table_name}"
   end
@@ -13,34 +13,38 @@ module VersionKit
     "Deleting versions from #{self.class.usable_config.table_name}"
   end
 end
-  
+
 class Model
   extend Usable
 
-  usable VersionKit, only: :save_version do |config|
+  usable VersionMixin, only: :save_version do |config|
     config.max_versions = 10
     config.table_name = 'custom_versions'
   end
+
+  def save
+    self.class.usable_method(self, :save_version).call
+  end
 end
 
->> Model.usable_config.table_name
-=> "custom_versions"
->> Model.new.save_version
-=> "Saving up to 10 versions to custom_versions"
->> Model.usable_config.available_methods[:save_version].bind(Model.new).call
-=> "Saving up to 10 versions to custom_versions"
->> Model.new.respond_to? :destroy_version     
-=> false
->> Model.usable_config.available_methods[:destroy_version].bind(Model.new).call
-=> nil
+model = Model.new
+model.save_version     # => "Saving up to 10 versions to custom_versions"
+model.destroy_version  # => NoMethodError: undefined method `destroy_version' for #<Model:...
 ```
-What's going on here? Well `#save_versions` is now extended onto the `Model` class, but `#destroy_version` is not!
+You'll notice that `#save_versions` is now included on `Model`, but `#destroy_version` isn't defined.
 
 ## Confidently calling methods
 
 We should all be writing [confident code](http://www.confidentruby.com/). That's why it is encouraged
-to reference methods through the `usable_config.available_methods` hash. This way you can confidently call methods! 
-Methods that are specified in the `:only` option, will return `nil` when called.
+to reference methods through the `usable_method` class level function. Methods passed in with the `:only` option
+will always return `nil` when called.
+
+Here's the same example as above, rewritten to call methods through the Usable interface:
+
+```ruby
+Model.usable_method(model, :save_version).call    # => "Saving up to 10 versions to custom_versions"
+Model.usable_method(model, :destroy_version).call # => nil
+```
 
 ## Separate included module from configurable methods
 
@@ -51,37 +55,40 @@ conflicts will be resolved by giving precedence to the parent module.
 For example:
 
 ```ruby
-# ruby -v 2.3.0
-
-module VersionKit
-  module UsableSpec
-    def version
-      "yo"
-    end
-    
-    def name
-      "nope"
-    end
-  end
-  
+module Mixin
   def name
-    "yup"
+    "defined by Mixin"
   end
-  
-  def self.included(base)
-    puts base.usable_config.available_methods[:version].bind(self).call
+
+  def from_mixin
+    "always here"
+  end
+
+  # @description Usable will apply the :only to just the methods defined by this module
+  module UsableSpec
+    def from_spec
+      "can be excluded"
+    end
+
+    def name
+      "defined by UsableSpec"
+    end
   end
 end
 
-Example = Class.new.extend Usable
-Example.usable VersionKit
-Example.new.version               # => "yo"
-Example.new.name                  # => "yup"
-Example.ancestors                 # => [Example, VersionKit, Example::VersionKitUsableSpecUsed, Object, Kernel, BasicObject]
+class Example
+  extend Usable
+  usable Mixin, only: [:name, :from_spec]
+end
+
+Example.new.from_spec   # => "can be excluded"
+Example.new.from_mixin  # => "always here"
+Example.new.name        # => "defined by Mixin"
+Example.ancestors       # => [Example, Mixin, Example::MixinUsableSpecUsed, Object, Kernel, BasicObject] (ruby -v 2.3.0)
 ```
 
 Noticed that Usable assigns the modified module to a constant with the same name as the given module, but with "Used" appended.
-The main module and the spec were both included, but `VersionKit` was not modified, so it didn't need a new name.
+The main module and the spec were both included, but `Mixin` was not modified, so it didn't need a new name.
 
 ## Installation
 

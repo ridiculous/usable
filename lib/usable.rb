@@ -47,4 +47,9 @@ module Usable
     usable_config.modules << mod
     send :include, mod
   end
+
+  # @return [Method] bound to the given -context-
+  def usable_method(context, method_name)
+    usable_config.available_methods[method_name].bind(context)
+  end
 end

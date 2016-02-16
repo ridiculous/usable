@@ -10,24 +10,54 @@ require "usable"
 # require "pry"
 # Pry.start
 
-#module VersionKit
-#  def save_version
-#    "Saving up to #{self.class.usable_config.max_versions} versions to #{self.class.usable_config.table_name}"
-#  end
-#
-#  def destroy_version
-#    "Deleting versions from #{self.class.usable_config.table_name}"
-#  end
-#end
-#
-#class Model
-#  extend Usable
-#
-#  usable VersionKit, only: :save_version do |config|
-#    config.max_versions = 10
-#    config.table_name = 'custom_versions'
-#  end
-#end
+module VersionMixin
+  def save_version
+    "Saving up to #{self.class.usable_config.max_versions} versions to #{self.class.usable_config.table_name}"
+  end
+
+  def destroy_version
+    "Deleting versions from #{self.class.usable_config.table_name}"
+  end
+end
+
+module Mixin
+  def name
+    "defined by Mixin"
+  end
+
+  def from_mixin
+    "always here"
+  end
+
+  # @description Usable will apply the :only to just the methods defined by this module
+  module UsableSpec
+    def from_spec
+      "can be excluded"
+    end
+
+    def name
+      "defined by UsableSpec"
+    end
+  end
+end
+
+class Model
+  extend Usable
+
+  usable VersionMixin, only: :save_version do |config|
+    config.max_versions = 10
+    config.table_name = 'custom_versions'
+  end
+
+  def save
+    self.class.usable_method(self, :save_version).call
+  end
+end
+
+class Example
+  extend Usable
+  usable Mixin, only: [:name, :from_spec]
+end
 
 require "irb"
 
