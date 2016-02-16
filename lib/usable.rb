@@ -41,7 +41,7 @@ module Usable
     mod_name = mod.name ? mod.name.split('::').last : "UsableMod#{Time.now.strftime('%s')}"
     const_name = "#{mod_name}Used"
     mod = mod.call if mod.respond_to? :call
-    remove_const const_name if const_defined? const_name
+    remove_const const_name if const_defined? const_name, false
     const_set const_name, mod
     usable_config.modules << mod
     send :include, mod
