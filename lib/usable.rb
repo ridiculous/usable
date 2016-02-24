@@ -25,26 +25,21 @@ module Usable
   # @note Hides methods
   # @note We include the primary mod when there is a UsableSpec set because any instance method defined on the mod are not
   #   configurable and should therefore takes precedence over those defined in the UsableSpec
+  #
+  # @param [Module] mod
+  # @param [Hash] options Customize the extension of the module as well as define config settings on the target
+  # @option [Array,Symbol]  :only Specify which methods are defined from the module
+  # @option [String,Symbol] :method ('include') How to include the module
+  #
   # @return [ModExtender] containing the original and modified module
   def usable(mod, options = {})
+    usable_options = { only: options.delete(:only), method: options.delete(:method) }
     options.each { |k, v| usable_config.public_send "#{k}=", v }
     yield usable_config if block_given?
-    mod_ext = ModExtender.new mod, usable_config
-    usable! mod_ext
-    usable! mod if mod_ext.has_spec?
+    mod_ext = ModExtender.new mod, usable_options
+    mod_ext.use! self
+    mod_ext.use_original! self
     mod_ext
-  end
-
-  # @description Directly include a module whose methods you want made available in +usable_config.available_methods+
-  #   Gives the module a name when including so that it shows up properly in the list of ancestors
-  def usable!(mod)
-    mod_name = mod.name ? mod.name.split('::').last : "UsableMod#{Time.now.strftime('%s')}"
-    const_name = "#{mod_name}Used"
-    mod = mod.call if mod.respond_to? :call
-    remove_const const_name if const_defined? const_name, false
-    const_set const_name, mod
-    usable_config.modules << mod
-    send :include, mod
   end
 
   # @return [Method] bound to the given -context-
