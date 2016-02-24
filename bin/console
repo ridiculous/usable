@@ -54,10 +54,18 @@ class Model
   end
 end
 
+module PersistenceOverride
+  def save
+    'nope'
+  end
+end
+
 class Example
   extend Usable
   usable Mixin, only: [:name, :from_spec]
 end
+
+Model.usable PersistenceOverride, method: 'prepend'
 
 require "irb"
 

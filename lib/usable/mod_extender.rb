@@ -6,7 +6,7 @@ module Usable
     def initialize(mod, options = {})
       @mod = mod
       @options = options
-      @options[:method] ||= 'include'
+      @options[:method] ||= :include
       if has_spec?
         @copy = mod.const_get(:UsableSpec).dup
         @name = "#{mod.name}UsableSpec"

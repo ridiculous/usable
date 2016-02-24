@@ -78,6 +78,21 @@ describe Usable do
       end
     end
 
+    context 'when given the :method option' do
+      before do
+        subject.class_eval do
+          def destroy_version
+            'no-op'
+          end
+        end
+      end
+
+      it 'extends the target const using the specified :method' do
+        subject.usable mod, method: :prepend
+        expect(subject.new.destroy_version).to eq "destroying version"
+      end
+    end
+
     context 'when given the :only option' do
       it 'defines the specified method' do
         subject.usable mod, only: :destroy_version
