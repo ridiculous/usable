@@ -32,15 +32,14 @@ model.save_version     # => "Saving up to 10 versions to custom_versions"
 model.destroy_version  # => NoMethodError: undefined method `destroy_version' for #<Model:...
 ```
 `Model` now has a `#save_versions` method but no `#destroy_version` method. Usable has effectively mixed in the given module
-using `include`. However, Ruby 2+ now has the ability to `prepend` modules as well. Usable supports this ability with
-the `:method` option:
+using `include`. Ruby 2+ offers the `prepend` method, which can be used instead by specifying it as the `:method` option:
 
 ```ruby
-Model.usable VersionMixin, method: 'prepend'
+Model.usable VersionMixin, method: :prepend
 ```
 
-Usable reserves the `:only` and `:method` options for these kinds of customizations. If you
-really need to define config settings on the target class with the same name as those, you can simply define them in the block:
+Usable reserves the `:only` and `:method` keys. All other keys in the given hash are defined as config settings. 
+If you really want to define a config on the target class with one of these names, you can simply define them in the block:
 
 ```ruby
 Model.usable VersionMixin, only: [:save_version] do |config|
