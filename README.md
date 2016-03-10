@@ -92,17 +92,24 @@ end
 
 class Example
   extend Usable
-  usable Mixin, only: [:name, :from_spec]
+  usable Mixin
 end
 
 Example.new.from_spec   # => "can be excluded"
 Example.new.from_mixin  # => "always here"
 Example.new.name        # => "defined by Mixin"
-Example.ancestors       # => [Example, Mixin, Example::MixinUsableSpecUsed, Object, Kernel, BasicObject] (ruby -v 2.3.0)
+Example.ancestors       # => [Example, Mixin, Mixin::UsableSpec, Object, Kernel, BasicObject] (ruby -v 2.3.0)
 ```
 
-Notice that Usable assigns the modified module to a constant with the same name as the given module, but with "Used" appended.
-The main module and the spec were both included, but `Mixin` was not modified, so it didn't need a new name.
+## Notes
+
+If the given module is modified by the `:only` option, then Usable will duplicate the module so that it doesn't mutate
+it globally. Duplicating a module returns an anonymous module. But anonymous mods in the ancestor list can be confusing.
+So Usable gives the modified module a name, which is the same name as the original module but with "Used" appended.
+
+```ruby
+Mixin => MixinUsed
+```
 
 ## Installation
 

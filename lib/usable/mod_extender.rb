@@ -1,29 +1,27 @@
 module Usable
   class ModExtender
     attr_reader :name
-    attr_accessor :copy, :mod, :options
+    attr_accessor :copy, :mod, :options, :unwanted
 
     def initialize(mod, options = {})
       @mod = mod
       @options = options
       @options[:method] ||= :include
       if has_spec?
-        @copy = mod.const_get(:UsableSpec).dup
+        @copy = mod.const_get(:UsableSpec)
         @name = "#{mod.name}UsableSpec"
       else
-        @copy = mod.dup
+        @copy = mod
         @name = mod.name
+      end
+      @unwanted = options[:only] ? @copy.instance_methods - Array(options[:only]) : []
+      if @unwanted.any?
+        @copy = @copy.dup
       end
     end
 
-    def call
-      override
-      copy
-    end
-
-    # @note Destructive, as it changes the dup'd mod
+    # @note Destructive, as it changes @copy
     def override
-      unwanted = options[:only] ? copy.instance_methods - Array(options[:only]) : []
       unwanted.each do |method_name|
         copy.send :remove_method, method_name
       end
@@ -32,10 +30,12 @@ module Usable
     # @description Directly include a module whose methods you want made available in +usable_config.available_methods+
     #   Gives the module a name when including so that it shows up properly in the list of ancestors
     def use!(target)
-      const_name = "#{mod_name}Used"
       override
-      target.send :remove_const, const_name if target.const_defined? const_name, false
-      target.const_set const_name, copy
+      if copy.name.nil?
+        const_name = "#{mod_name}Used"
+        target.send :remove_const, const_name if target.const_defined? const_name, false
+        target.const_set const_name, copy
+      end
       target.usable_config.modules << copy
       target.send options[:method], copy
     end

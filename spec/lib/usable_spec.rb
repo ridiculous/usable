@@ -200,22 +200,56 @@ describe Usable do
       before { Object.const_set :TestMod, mod }
       after { Object.send :remove_const, :TestMod }
 
-      it 'appends "Used" to the module name' do
-        expect {
-          Subject.usable TestMod
-        }.to change { ancestors }.to include 'Subject::TestModUsed'
-        assert_index_of_mod 'Subject::TestModUsed', 1
+      context "when module's methods is mutated by the :only option" do
+        it 'appends "Used" to the name of the original module' do
+          expect {
+            Subject.usable TestMod, only: :destroy_version
+          }.to change { ancestors }.to include 'Subject::TestModUsed'
+          assert_index_of_mod 'Subject::TestModUsed', 1
+        end
+
+        it 'does not mutate the original module' do
+          expect {
+            Subject.usable TestMod, only: :destroy_version
+          }.to_not change { TestMod.instance_methods(false) }
+        end
+      end
+
+      context 'when given the :only option is empty' do
+        it 'uses the module name without defining a new constant under Subject' do
+          expect {
+            Subject.usable TestMod
+          }.to change { ancestors }.to include 'TestMod'
+          assert_index_of_mod 'TestMod', 1
+        end
       end
 
       context 'when the module has a "UsableSpec" defined' do
         before { TestMod.const_set :UsableSpec, spec_mod }
         after { TestMod.send :remove_const, :UsableSpec }
 
-        it 'appends "UsableSpec" to the name of the module' do
-          expect {
-            Subject.usable TestMod
-          }.to change { ancestors }.to include 'Subject::TestModUsableSpecUsed'
-          assert_index_of_mod 'Subject::TestModUsableSpecUsed', 2
+        context 'when there are methods to remove via the :only option' do
+          it 'appends "UsableSpec" to the name of the modified module' do
+            expect {
+              Subject.usable TestMod, only: :update_version
+            }.to change { ancestors }.to include 'Subject::TestModUsableSpecUsed'
+            assert_index_of_mod 'Subject::TestModUsableSpecUsed', 2
+          end
+
+          it 'does not mutate the original UsableSpec module' do
+            expect {
+              Subject.usable TestMod, only: :destroy_version
+            }.to_not change { TestMod::UsableSpec.instance_methods(false) }
+          end
+        end
+
+        context 'when given the :only option is empty' do
+          it 'uses the module name without defining a new constant under Subject' do
+            expect {
+              Subject.usable TestMod
+            }.to change { ancestors }.to include 'TestMod::UsableSpec'
+            assert_index_of_mod 'TestMod::UsableSpec', 2
+          end
         end
       end
     end

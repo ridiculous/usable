@@ -10,7 +10,7 @@ describe Usable::Config do
   end
 
   describe '#available_methods' do
-    context 'when there are no method' do
+    context 'when there are no methods' do
       it 'returns an object we can #bind and #call' do
         expect(
           subject.available_methods[:yo].bind(self).call(1, []) do |_|

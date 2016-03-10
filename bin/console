@@ -62,7 +62,8 @@ end
 
 class Example
   extend Usable
-  usable Mixin, only: [:name, :from_spec]
+  usable Mixin
+  usable VersionMixin, max_versions: 10
 end
 
 Model.usable PersistenceOverride, method: 'prepend'
