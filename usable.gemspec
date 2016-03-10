@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["arebuckley@gmail.com"]
 
   spec.summary       = %q{Mounts and configures modules}
-  spec.description   = %q{A simple way to mount and configure your modules. Usable gives you control over which methods are included.}
+  spec.description   = %q{An elegant way to mount and configure your modules. Usable gives you control over which methods are included.}
   spec.homepage      = "https://github.com/ridiculous/usable"
   spec.license       = "MIT"
 
