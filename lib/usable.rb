@@ -39,6 +39,7 @@ module Usable
     mod_ext = ModExtender.new mod, usable_options
     mod_ext.use! self
     mod_ext.use_original! self
+    mod_ext.use_class_methods! self
     mod_ext
   end
 
