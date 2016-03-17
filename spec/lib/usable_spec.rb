@@ -34,6 +34,7 @@ describe Usable do
   let(:class_mod) do
     Module.new do
       def from_class_mod
+        'defined on class'
       end
     end
   end
@@ -112,15 +113,33 @@ describe Usable do
         expect(subject.new).to_not respond_to :versions
       end
 
-      context 'when the given module has a UsableSpec defined' do
+      context 'when the given module has a ClassMethods mod defined' do
         before do
-          mod.const_set :UsableSpec, spec_mod
           mod.const_set :ClassMethods, class_mod
         end
 
         after do
-          mod.send :remove_const, :UsableSpec
           mod.send :remove_const, :ClassMethods
+        end
+
+        it 'defines the class methods on the target' do
+          expect(subject).to_not respond_to(:from_class_mod)
+          expect(subject.new).to_not respond_to(:from_class_mod)
+          subject.usable mod
+          expect(subject.new).to_not respond_to(:from_class_mod)
+          expect(subject.from_class_mod).to eq 'defined on class'
+        end
+      end
+
+      context 'when the given module has a UsableSpec defined' do
+        before do
+          mod.const_set :UsableSpec, spec_mod
+          mod.const_set :OtherMod, class_mod
+        end
+
+        after do
+          mod.send :remove_const, :UsableSpec
+          mod.send :remove_const, :OtherMod
         end
 
         context 'when the :only option is in effect' do
@@ -132,7 +151,7 @@ describe Usable do
           end
         end
 
-        it 'defines methods on from the spec on the target class' do
+        it 'defines instance methods on from the spec on the target class' do
           expect(subject.new).to_not respond_to(:update_version)
           subject.usable mod
           expect(subject.new.update_version).to eq 'defined on spec'

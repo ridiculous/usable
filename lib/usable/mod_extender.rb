@@ -1,5 +1,8 @@
 module Usable
   class ModExtender
+    SPEC = :UsableSpec
+    CLASS_MODULE = :ClassMethods
+
     attr_reader :name
     attr_accessor :copy, :mod, :options, :unwanted
 
@@ -8,7 +11,7 @@ module Usable
       @options = options
       @options[:method] ||= :include
       if has_spec?
-        @copy = mod.const_get(:UsableSpec)
+        @copy = mod.const_get SPEC
         @name = "#{mod.name}UsableSpec"
       else
         @copy = mod
@@ -40,15 +43,21 @@ module Usable
       target.send options[:method], copy
     end
 
-    # @description Sends the method to the target with the original module
+    # @description Includes or prepends the original module onto the target
     def use_original!(target)
       return unless has_spec?
       target.usable_config.modules << mod
       target.send options[:method], mod
     end
 
+    # @description Extends the target with the module's ClassMethod mod
+    def use_class_methods!(target)
+      return unless mod.const_defined? CLASS_MODULE
+      target.extend mod.const_get CLASS_MODULE
+    end
+
     def has_spec?
-      mod.const_defined?(:UsableSpec)
+      mod.const_defined? SPEC
     end
 
     def mod_name

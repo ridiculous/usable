@@ -60,11 +60,14 @@ Model.usable_method(model, :save_version).call    # => "Saving up to 10 versions
 Model.usable_method(model, :destroy_version).call # => nil
 ```
 
-## Separate the _included_ module from the _configurable_ methods
+## Module Naming Conventions
 
-Sometimes you want to define methods on a module and have them always be included. To do this, define a module named 
-`UsableSpec` in the scope of the module you are mounting. `Usable` will detect this and use he "spec" module to configure 
-the available methods. Any naming conflicts will be resolved by giving precedence to the parent module.
+Modules with the following names found within the target module's namespace will be automatically used.
+
+`ClassMethods` - extended onto the target module.
+
+`UsableSpec` - tells usable which methods are configurable via the `:only` option. Any naming conflicts will be resolved by 
+giving precedence to the parent module.
 
 For example:
 
@@ -92,13 +95,13 @@ end
 
 class Example
   extend Usable
-  usable Mixin
+  usable Mixin, only: :from_spec
 end
 
 Example.new.from_spec   # => "can be excluded"
 Example.new.from_mixin  # => "always here"
 Example.new.name        # => "defined by Mixin"
-Example.ancestors       # => [Example, Mixin, Mixin::UsableSpec, Object, Kernel, BasicObject] (ruby -v 2.3.0)
+Example.ancestors       # => [Example, Mixin, Example::MixinUsableSpecUsed, Object, Kernel, BasicObject] (ruby -v 2.3.0)
 ```
 
 ## Notes
