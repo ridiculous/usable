@@ -34,6 +34,9 @@ module Usable
   # @return [ModExtender] containing the original and modified module
   def usable(mod, options = {})
     usable_options = { only: options.delete(:only), method: options.delete(:method) }
+    if mod.respond_to? :usable_config
+      mod.usable_config.to_h.each { |k, v| usable_config.public_send "#{k}=", v }
+    end
     options.each { |k, v| usable_config.public_send "#{k}=", v }
     yield usable_config if block_given?
     mod_ext = ModExtender.new mod, usable_options

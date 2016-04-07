@@ -169,6 +169,23 @@ describe Usable do
         end
       end
     end
+
+    context 'when the given module has defined a +usable_config+' do
+      before do
+        mod.extend described_class
+        mod.usable_config[:key] = 'secret'
+      end
+
+      it 'copies the usable config settings over to the subject' do
+        expect { subject.usable mod }.to change { subject.usable_config[:key] }.from(nil).to('secret')
+      end
+
+      context "when the subject is given settings with the same name as the module's setting" do
+        it 'uses the given settings' do
+          expect { subject.usable mod, key: 'public' }.to change { subject.usable_config[:key] }.from(nil).to('public')
+        end
+      end
+    end
   end
 
   describe '#available_methods' do
