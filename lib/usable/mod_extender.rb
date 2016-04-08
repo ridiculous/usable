@@ -30,7 +30,7 @@ module Usable
       end
     end
 
-    # @description Directly include a module whose methods you want made available in +usable_config.available_methods+
+    # @description Directly include a module whose methods you want made available in +usables.available_methods+
     #   Gives the module a name when including so that it shows up properly in the list of ancestors
     def use!(target)
       override
@@ -39,14 +39,14 @@ module Usable
         target.send :remove_const, const_name if target.const_defined? const_name, false
         target.const_set const_name, copy
       end
-      target.usable_config.modules << copy
+      target.usables.modules << copy
       target.send options[:method], copy
     end
 
     # @description Includes or prepends the original module onto the target
     def use_original!(target)
       return unless has_spec?
-      target.usable_config.modules << mod
+      target.usables.modules << mod
       target.send options[:method], mod
     end
 
