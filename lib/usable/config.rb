@@ -41,6 +41,12 @@ module Usable
       modules << mod
     end
 
+    def inspect
+      ::Object.instance_method(:inspect).bind(self).call
+    end
+
+    alias_method :to_s, :inspect
+
     #
     # Internal
     #
