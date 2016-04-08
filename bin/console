@@ -12,15 +12,18 @@ require "usable"
 
 module VersionMixin
   def save_version
-    "Saving up to #{self.class.usable_config.max_versions} versions to #{self.class.usable_config.table_name}"
+    "Saving up to #{self.class.usables.max_versions} versions to #{self.class.usables.table_name}"
   end
 
   def destroy_version
-    "Deleting versions from #{self.class.usable_config.table_name}"
+    "Deleting versions from #{self.class.usables.table_name}"
   end
 end
 
 module Mixin
+  extend Usable
+  usables[:max_versions] = 20
+
   def name
     "defined by Mixin"
   end
@@ -60,10 +63,21 @@ module PersistenceOverride
   end
 end
 
+module Nested
+  module Extension
+    def go
+      'going'
+    end
+  end
+end
+
 class Example
   extend Usable
   usable Mixin
-  usable VersionMixin, max_versions: 10
+  usable VersionMixin do
+    max_versions 10
+  end
+  usable Nested::Extension
 end
 
 Model.usable PersistenceOverride, method: 'prepend'

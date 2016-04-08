@@ -1,25 +1,29 @@
 # Usable [![Gem Version](https://badge.fury.io/rb/usable.svg)](http://badge.fury.io/rb/usable) [![Build Status](https://travis-ci.org/ridiculous/usable.svg)](https://travis-ci.org/ridiculous/usable) [![Code Climate](https://codeclimate.com/github/ridiculous/usable/badges/gpa.svg)](https://codeclimate.com/github/ridiculous/usable)
 
-An elegant way to mount and configure your modules. Usable gives you control over which methods are included, and a simple
-interface to help you call dynamic methods with confidence.
+Usable provides an elegant way to mount and configure your modules. Class level settings can be configured on a per module basis,
+available to both the module and including class. Allows you to include only the methods you want. 
 
 ```ruby
 module VersionMixin
+  extend Usable
+  usables[:max_versions] = 25
+  usables[:table_name] = 'versions'
+  
   def save_version
-    "Saving up to #{self.class.usable_config.max_versions} versions to #{self.class.usable_config.table_name}"
+    "Saving up to #{usables.max_versions} versions to #{usables.table_name}"
   end
 
   def destroy_version
-    "Deleting versions from #{self.class.usable_config.table_name}"
+    "Deleting versions from #{usables.table_name}"
   end
 end
 
 class Model
   extend Usable
 
-  usable VersionMixin, only: :save_version do |config|
-    config.max_versions = 10
-    config.table_name = 'custom_versions'
+  usable VersionMixin, only: :save_version do
+    max_versions 10
+    table_name 'custom_versions'
   end
 
   def save
@@ -36,15 +40,6 @@ using `include`. Ruby 2+ offers the `prepend` method, which can be used instead 
 
 ```ruby
 Model.usable VersionMixin, method: :prepend
-```
-
-Usable reserves the `:only` and `:method` keys. All other keys in the given hash are defined as config settings. 
-If you really want to define a config on the target class with one of these names, you can simply define them in the block:
-
-```ruby
-Model.usable VersionMixin, only: [:save_version] do |config|
-  config.only = "Will be set on `Model.usable_config.only`"
-end
 ```
 
 ## Confidently calling methods

@@ -6,7 +6,7 @@ describe Usable do
   let(:mod) do
     Module.new do
       def versions
-        "Saving #{self.class.usable_config.max_versions} versions to #{self.class.usable_config.table_name} table"
+        "Saving #{self.class.usables.max_versions} versions to #{self.class.usables.table_name} table"
       end
 
       def destroy_version
@@ -39,41 +39,32 @@ describe Usable do
     end
   end
 
-  after(:each) { subject.usable_config = nil }
+  after(:each) { subject.usables = nil }
 
-  describe "#usable_config" do
-    it "assigns @usable_config" do
-      expect(subject.usable_config).to be_a Usable::Config
+  describe "#usables" do
+    it "returns a usable config" do
+      expect(subject.usables).to be_a Usable::Config
     end
   end
 
   describe "#usable" do
-    context "unless (self < mod)" do
-      it "calls :send with :include and -mod-" do
-        expect(subject).to receive(:include).with(instance_of(Module))
-        subject.usable mod
-      end
+    it 'returns an instance of ModExtender' do
+      expect(subject.usable(mod)).to be_a(Usable::ModExtender)
     end
-
-    it "assign the given :options as values to @usable_config" do
-      expect {
-        subject.usable mod, table_name: 'custom', max_versions: 50
-      }.to change(subject.usable_config, :to_h).from({}).to(table_name: 'custom', max_versions: 50)
-    end
-
 
     context "when block_given?" do
-      it "yields @usable_config to the given block" do
+      it "yields @usables to the given block" do
         expect {
-          subject.usable mod do |usable_config|
-            usable_config.max_versions = 10
+          subject.usable mod do
+            max_versions 10
           end
-        }.to change(subject.usable_config, :max_versions).from(nil).to(10)
+        }.to change(subject.usables, :max_versions).from(nil).to(10)
       end
 
-      it "uses the usable_config in the method calls" do
-        subject.usable mod, table_name: 'versions' do |usable_config|
-          usable_config.max_versions = 10
+      it "uses the usables in the method calls" do
+        subject.usable mod do
+          table_name 'versions'
+          max_versions 10
         end
         expect(subject.new.versions).to eq "Saving 10 versions to versions table"
       end
@@ -170,30 +161,40 @@ describe Usable do
       end
     end
 
-    context 'when the given module has defined a +usable_config+' do
+    context 'when the given module has defined a +usables+' do
       before do
         mod.extend described_class
-        mod.usable_config[:key] = 'secret'
+        mod.usables[:key] = 'secret'
       end
 
       it 'copies the usable config settings over to the subject' do
-        expect { subject.usable mod }.to change { subject.usable_config[:key] }.from(nil).to('secret')
+        expect { subject.usable mod }.to change { subject.usables[:key] }.from(nil).to('secret')
       end
 
       context "when the subject is given settings with the same name as the module's setting" do
         it 'uses the given settings' do
-          expect { subject.usable mod, key: 'public' }.to change { subject.usable_config[:key] }.from(nil).to('public')
+          expect {
+            subject.usable mod do
+              key 'public'
+            end
+          }.to change { subject.usables[:key] }.from(nil).to('public')
         end
       end
     end
   end
 
+  describe 'instance level config access' do
+    it 'should expose +usables+ on the instance' do
+      expect(subject.new.usables).to be subject.usables
+    end
+  end
+
   describe '#available_methods' do
     it 'returns the list of unbound methods we defined on the target' do
-      expect(subject.usable_config.available_methods).to be_empty
+      expect(subject.usables.available_methods).to be_empty
       subject.usable mod
-      expect(subject.usable_config.available_methods.keys.sort).to eq [:destroy_version, :latest_version, :versions]
-      expect(subject.usable_config.available_methods[:destroy_version]).to be_kind_of UnboundMethod
+      expect(subject.usables.available_methods.keys.sort).to eq [:destroy_version, :latest_version, :versions]
+      expect(subject.usables.available_methods[:destroy_version]).to be_kind_of UnboundMethod
     end
 
     context 'when a UsableSpec is defined' do
@@ -202,8 +203,8 @@ describe Usable do
 
       it 'adds the methods from the UsableSpec' do
         subject.usable mod
-        expect(subject.usable_config.available_methods.keys.sort).to eq [:destroy_version, :from_class_mod, :latest_version, :versions]
-        expect(subject.usable_config.available_methods).to include(:from_class_mod)
+        expect(subject.usables.available_methods.keys.sort).to eq [:destroy_version, :from_class_mod, :latest_version, :versions]
+        expect(subject.usables.available_methods).to include(:from_class_mod)
       end
     end
   end
@@ -248,6 +249,37 @@ describe Usable do
           expect {
             Subject.usable TestMod, only: :destroy_version
           }.to_not change { TestMod.instance_methods(false) }
+        end
+
+        it 'scopes the config to a method named after the module on @usables' do
+          Subject.usable TestMod do
+            language :en
+          end
+          expect(subject.usables.test_mod).to be_a(Usable::Config)
+          expect(subject.usables.test_mod.language).to eq :en
+        end
+
+        context 'when including modules with the same settings' do
+          before { Object.const_set :OtherMod, class_mod }
+          after { Object.send :remove_const, :OtherMod }
+
+          before do
+            Subject.usable TestMod do
+              language :en
+            end
+            Subject.usable OtherMod do
+              language :fr
+            end
+          end
+
+          it 'scopes the settings to the module name' do
+            expect(subject.usables.test_mod.language).to be :en
+            expect(subject.usables.other_mod.language).to be :fr
+          end
+
+          it 'gives defines the settings globally using the last value' do
+            expect(subject.usables.language).to be :fr
+          end
         end
       end
 
