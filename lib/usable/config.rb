@@ -1,12 +1,11 @@
 module Usable
-  class Config
+  class Config < BasicObject
     def each(&block)
-      return enum_for(__method__) unless block_given?
       @spec.to_h.each(&block)
     end
 
     def spec(key, value = nil)
-      @spec ||= OpenStruct.new
+      @spec ||= ::OpenStruct.new
       if value
         @spec[key.to_s.tr('=', '')] = value
       else
@@ -31,7 +30,7 @@ module Usable
     end
 
     def available_methods
-      modules.each_with_object(Hash.new(default_method)) do |mod, result|
+      modules.each_with_object(::Hash.new(default_method)) do |mod, result|
         mod.instance_methods.each do |method_name|
           result[method_name] = mod.instance_method method_name
         end

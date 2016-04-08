@@ -42,6 +42,15 @@ using `include`. Ruby 2+ offers the `prepend` method, which can be used instead 
 Model.usable VersionMixin, method: :prepend
 ```
 
+Usable reserves the `:only` and `:method` keys. All other keys in the given hash are defined as config settings. If you really
+want to define a config on the target class with one of these names, you can simply define them in the block:
+
+```ruby
+Model.usable VersionMixin, only: [:save_version] do |config|
+  config.only = "Will be set on `Model.usable_config.only`"
+end
+```
+
 ## Confidently calling methods
 
 We should all be writing [confident code](http://www.confidentruby.com/), which is why you might want to call configurable

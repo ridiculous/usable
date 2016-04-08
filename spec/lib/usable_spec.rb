@@ -70,6 +70,15 @@ describe Usable do
       end
     end
 
+    context "when options are given" do
+      it "defines the given options as usable settings" do
+        subject.usable mod, table_name: 'versions' do
+          max_versions 10
+        end
+        expect(subject.new.versions).to eq "Saving 10 versions to versions table"
+      end
+    end
+
     context 'when given the :method option' do
       before do
         subject.class_eval do
