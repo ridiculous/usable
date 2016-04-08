@@ -1,11 +1,11 @@
 module Usable
-  class Config < BasicObject
+  class Config
     def each(&block)
       @spec.to_h.each(&block)
     end
 
     def spec(key, value = nil)
-      @spec ||= ::OpenStruct.new
+      @spec ||= OpenStruct.new
       if value
         @spec[key.to_s.tr('=', '')] = value
       else
@@ -30,7 +30,7 @@ module Usable
     end
 
     def available_methods
-      modules.each_with_object(::Hash.new(default_method)) do |mod, result|
+      modules.each_with_object(Hash.new(default_method)) do |mod, result|
         mod.instance_methods.each do |method_name|
           result[method_name] = mod.instance_method method_name
         end
@@ -40,12 +40,6 @@ module Usable
     def add_module(mod)
       modules << mod
     end
-
-    def inspect
-      ::Object.instance_method(:inspect).bind(self).call
-    end
-
-    alias_method :to_s, :inspect
 
     #
     # Internal

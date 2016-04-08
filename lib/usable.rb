@@ -13,6 +13,14 @@ module Usable
         self.class.usables
       end
     end
+    unless base.is_a? Class
+      base.instance_eval do
+        def config(&block)
+          return usables unless block_given?
+          usables.instance_eval &block
+        end unless defined? config
+      end
+    end
   end
 
   def usables

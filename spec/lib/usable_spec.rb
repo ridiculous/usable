@@ -41,6 +41,32 @@ describe Usable do
 
   after(:each) { subject.usables = nil }
 
+  context 'when extending a module with Usable' do
+    it 'defines +config+ which delegates to +usables+ for setting configuration' do
+      spec_mod.extend Usable
+      spec_mod.config do
+        language :en
+      end
+      spec_mod.config.country = 'US'
+      expect(spec_mod.usables.country).to eq 'US'
+      expect(spec_mod.usables.language).to eq :en
+      expect(spec_mod.config).to be spec_mod.usables
+    end
+
+    context 'when the module already defines +config+' do
+      before do
+        def spec_mod.config
+          'existing config'
+        end
+      end
+
+      it 'does not overwrite the existing method' do
+        spec_mod.extend Usable
+        expect(spec_mod.config).to eq 'existing config'
+      end
+    end
+  end
+
   describe "#usables" do
     it "returns a usable config" do
       expect(subject.usables).to be_a Usable::Config
