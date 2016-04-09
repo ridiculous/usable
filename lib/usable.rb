@@ -14,7 +14,7 @@ module Usable
       end
 
       def usable_method(method_name)
-        usables.available_methods[method_name].bind(self)
+        self.class.usable_method(self, method_name)
       end
     end
     unless base.is_a? Class

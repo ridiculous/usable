@@ -39,14 +39,14 @@ module Usable
         target.send :remove_const, const_name if target.const_defined? const_name, false
         target.const_set const_name, copy
       end
-      target.usables.modules << copy
+      target.usables.add_module copy
       target.send options[:method], copy
     end
 
     # @description Includes or prepends the original module onto the target
     def use_original!(target)
       return unless has_spec?
-      target.usables.modules << mod
+      target.usables.add_module mod
       target.send options[:method], mod
     end
 
