@@ -12,6 +12,10 @@ module Usable
       def usables
         self.class.usables
       end
+
+      def usable_method(method_name)
+        usables.available_methods[method_name].bind(self)
+      end
     end
     unless base.is_a? Class
       base.instance_eval do

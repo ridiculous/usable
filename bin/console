@@ -12,11 +12,11 @@ require "usable"
 
 module VersionMixin
   def save_version
-    "Saving up to #{self.class.usables.max_versions} versions to #{self.class.usables.table_name}"
+    "Saving up to #{usables.max_versions} versions to #{usables.table_name}"
   end
 
   def destroy_version
-    "Deleting versions from #{self.class.usables.table_name}"
+    "Deleting versions from #{usables.table_name}"
   end
 end
 
@@ -47,13 +47,13 @@ end
 class Model
   extend Usable
 
-  usable VersionMixin, only: :save_version do |config|
-    config.max_versions = 10
-    config.table_name = 'custom_versions'
+  usable VersionMixin, only: :save_version do
+    max_versions 10
+    table_name 'custom_versions'
   end
 
   def save
-    self.class.usable_method(self, :save_version).call
+    usable_method(:save_version).call
   end
 end
 

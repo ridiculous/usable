@@ -27,7 +27,7 @@ class Model
   end
 
   def save
-    self.class.usable_method(self, :save_version).call
+    usable_method(:save_version).call
   end
 end
 
@@ -54,13 +54,14 @@ end
 ## Confidently calling methods
 
 We should all be writing [confident code](http://www.confidentruby.com/), which is why you might want to call configurable
-methods through the `usable_method` class level function. Methods passed in with the `:only` option
+methods through the `usable_method` class and instance method. Methods passed in with the `:only` option
 will _always_ return `nil` when called. Thus, the confidence.
 
 Here's the same example as above, rewritten to call methods through the Usable interface:
 
 ```ruby
 Model.usable_method(model, :save_version).call    # => "Saving up to 10 versions to custom_versions"
+model.usable_method(:save_version).call           # => "Saving up to 10 versions to custom_versions"
 Model.usable_method(model, :destroy_version).call # => nil
 ```
 

@@ -6,7 +6,7 @@ describe Usable do
   let(:mod) do
     Module.new do
       def versions
-        "Saving #{self.class.usables.max_versions} versions to #{self.class.usables.table_name} table"
+        "Saving #{usables.max_versions} versions to #{usables.table_name} table"
       end
 
       def destroy_version
@@ -385,4 +385,22 @@ describe Usable do
     end
   end
 
+  describe '#usable_method' do
+    it 'returns a method for the given method bound to the given context' do
+      expect(subject.new.usable_method(:latest_version).call).to be nil
+      subject.usable mod
+      expect(subject.new.usable_method(:latest_version)).to be_a(Method)
+      expect(subject.new.usable_method(:latest_version).name).to be :latest_version
+      expect(subject.new.usable_method(:latest_version).call).to eq "here i am"
+    end
+
+    context 'when the method cannot be found' do
+      it 'returns the null method' do
+        subject.usable mod
+        expect(subject.new.usable_method(:foo)).to be_a(Method)
+        expect(subject.new.usable_method(:foo).name).to be :default_method
+        expect(subject.new.usable_method(:foo).call).to be nil
+      end
+    end
+  end
 end
