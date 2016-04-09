@@ -16,15 +16,17 @@ module Usable
     unless base.is_a? Class
       base.instance_eval do
         def config(&block)
-          return usables unless block_given?
-          usables.instance_eval &block
+          usables(&block)
         end unless defined? config
       end
     end
   end
 
+  # @description Read and write configuration options
   def usables
     @usables ||= Config.new
+    return @usables unless block_given?
+    @usables.instance_eval &Proc.new
   end
 
   attr_writer :usables
