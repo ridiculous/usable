@@ -46,8 +46,8 @@ Usable reserves the `:only` and `:method` keys. All other keys in the given hash
 want to define a config on the target class with one of these names, you can simply define them in the block:
 
 ```ruby
-Model.usable VersionMixin, only: [:save_version] do |config|
-  config.only = "Will be set on `Model.usable_config.only`"
+Model.usable VersionMixin, only: [:save_version] do
+  only "Will be set on `Model.usables.only` and namespaced under `Model.usables.version_mixin.only`"
 end
 ```
 
