@@ -51,6 +51,30 @@ Model.usable VersionMixin, only: [:save_version] do
 end
 ```
 
+## Configuring Modules
+
+Configuration settings defined on a "usable" module will be copied to the including class. Usable defines
+a `config` method on extended modules (alias for `usables`) to use for setting default configuration options:
+
+```ruby
+module Mixin
+  extend Usable
+  config.language = :en
+  config do
+    country 'US'
+    state 'Hawaii'
+    spec :census, {
+      population: 1_400_00,
+      daily_visitors:  218_150
+    }
+  end
+end
+
+Model.usable Mixin
+Model.usables[:state]                 # => 'Hawaii'
+Model.usables.census[:daily_visitors] # => 218150
+```
+
 ## Confidently calling methods
 
 We should all be writing [confident code](http://www.confidentruby.com/), which is why you might want to call configurable
