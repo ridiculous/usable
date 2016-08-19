@@ -1,7 +1,5 @@
 module Usable
   class ModExtender
-    CLASS_MODULE = :ClassMethods
-
     attr_reader :name
     attr_accessor :copy, :mod, :options, :unwanted
 
@@ -39,8 +37,14 @@ module Usable
 
     # @description Extends the target with the module's ClassMethod mod
     def use_class_methods!(target)
-      return unless mod.const_defined? CLASS_MODULE
-      target.extend mod.const_get CLASS_MODULE
+      return unless mod.const_defined? :ClassMethods
+      target.extend mod.const_get :ClassMethods
+    end
+
+    # @description Extends the target with the module's ClassMethod mod
+    def use_instance_methods!(target)
+      return unless mod.const_defined? :InstanceMethods
+      target.include mod.const_get :InstanceMethods
     end
 
     def mod_name

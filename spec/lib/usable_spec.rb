@@ -39,6 +39,14 @@ describe Usable do
     end
   end
 
+  let(:instance_mod) do
+    Module.new do
+      def from_instance_mod
+        'defined as instance method'
+      end
+    end
+  end
+
   after(:each) { subject.usables = nil }
 
   context 'when extending a module with Usable' do
@@ -157,6 +165,24 @@ describe Usable do
         end
       end
 
+      context 'when the given module has a InstanceMethods mod defined' do
+        before do
+          mod.const_set :InstanceMethods, instance_mod
+        end
+
+        after do
+          mod.send :remove_const, :InstanceMethods
+        end
+
+        it 'defines the class methods on the target' do
+          expect(subject).to_not respond_to(:from_instance_mod)
+          expect(subject.new).to_not respond_to(:from_instance_mod)
+          subject.usable mod
+          expect(subject).to_not respond_to(:from_instance_mod)
+          expect(subject.new).to respond_to(:from_instance_mod)
+          expect(subject.new.from_instance_mod).to eq 'defined as instance method'
+        end
+      end
     end
 
     context 'when the given module has defined a +usables+' do
