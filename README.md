@@ -27,7 +27,7 @@ class Model
   end
 
   def save
-    usable_method(:save_version).call
+    save_version
   end
 end
 
