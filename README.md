@@ -6,11 +6,11 @@ available to both the module and including class. Allows you to include only the
 ```ruby
 module VersionMixin
   extend Usable
-  usables[:max_versions] = 25
-  usables[:table_name] = 'versions'
+  config.max_versions = 25
+  config.table_name = 'versions'
   
   def save_version
-    "Saving up to #{usables.max_versions} versions to #{usables.table_name}"
+    "Saving #{usables.max_versions} #{usables.table_name}"
   end
 
   def destroy_version
@@ -23,7 +23,6 @@ class Model
 
   usable VersionMixin, only: :save_version do
     max_versions 10
-    table_name 'custom_versions'
   end
 
   def save
@@ -32,7 +31,7 @@ class Model
 end
 
 model = Model.new
-model.save_version     # => "Saving up to 10 versions to custom_versions"
+model.save_version     # => "Saving 10 versions"
 model.destroy_version  # => NoMethodError: undefined method `destroy_version' for #<Model:...
 ```
 `Model` now has a `#save_versions` method but no `#destroy_version` method. Usable has effectively mixed in the given module
