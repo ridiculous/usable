@@ -35,9 +35,7 @@ module Usable
 
   attr_writer :usables
 
-  # @description Configures the +available_methods+ of a module using the given options or block and then includes it on
-  #   the target class. Checks if there is a module named UsableSpec within the given mods namespace and uses the instance
-  #   methods of that as the +available_methods+
+  # @description Includes the given module with a set of options or block to configure it
   #
   # @example
   #
@@ -49,9 +47,6 @@ module Usable
   #   end
   #
   # @note Hides methods
-  # @note We include the primary mod when there is a UsableSpec set because any instance methods defined on the mod are
-  #   not configurable and should therefore takes precedence over those defined in the UsableSpec
-  #
   # @param [Module] mod
   # @param [Hash] options Customize the extension of the module as well as define config settings on the target
   # @option [Array,Symbol]  :only Limit which methods are copied from the module
@@ -75,7 +70,6 @@ module Usable
     # Include module
     mod_ext = ModExtender.new mod, usable_options
     mod_ext.use! self
-    mod_ext.use_original! self
     mod_ext.use_class_methods! self
     mod_ext
   end

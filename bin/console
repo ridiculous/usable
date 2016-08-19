@@ -27,21 +27,6 @@ module Mixin
   def name
     "defined by Mixin"
   end
-
-  def from_mixin
-    "always here"
-  end
-
-  # @description Usable will apply the :only to just the methods defined by this module
-  module UsableSpec
-    def from_spec
-      "can be excluded"
-    end
-
-    def name
-      "defined by UsableSpec"
-    end
-  end
 end
 
 class Model

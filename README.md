@@ -95,44 +95,6 @@ Modules with the following names found within the target module's namespace will
 
 `ClassMethods` - extended onto the target module.
 
-`UsableSpec` - tells usable which methods are configurable via the `:only` option. Any naming conflicts will be resolved by 
-giving precedence to the parent module.
-
-For example:
-
-```ruby
-module Mixin
-  def name
-    "defined by Mixin"
-  end
-
-  def from_mixin
-    "always here"
-  end
-
-  # @description Usable will apply the :only option to just the methods defined by this module
-  module UsableSpec
-    def from_spec
-      "can be excluded"
-    end
-
-    def name
-      "defined by UsableSpec"
-    end
-  end
-end
-
-class Example
-  extend Usable
-  usable Mixin, only: :from_spec
-end
-
-Example.new.from_spec   # => "can be excluded"
-Example.new.from_mixin  # => "always here"
-Example.new.name        # => "defined by Mixin"
-Example.ancestors       # => [Example, Mixin, Example::MixinUsableSpecUsed, Object, Kernel, BasicObject] (ruby -v 2.3.0)
-```
-
 ## Notes
 
 If the given module is modified by the `:only` option, then Usable will duplicate the module so that it doesn't mutate
