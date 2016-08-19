@@ -93,8 +93,8 @@ Model.usable_method(model, :destroy_version).call # => nil
 
 Modules with the following names found within the target module's namespace will be automatically used.
 
-* `ClassMethods` - extended onto the target
-* `InstanceMethods` - included on the target
+* `ClassMethods`
+* `InstanceMethods`
 
 ## Notes
 
