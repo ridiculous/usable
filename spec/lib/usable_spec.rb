@@ -82,8 +82,8 @@ describe Usable do
   end
 
   describe "#usable" do
-    it 'returns an instance of ModExtender' do
-      expect(subject.usable(mod)).to be_a(Usable::ModExtender)
+    it 'returns self' do
+      expect(subject.usable(mod)).to be subject
     end
 
     context "when block_given?" do

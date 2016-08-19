@@ -67,12 +67,10 @@ module Usable
     end
     [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
     [scope, usables].each { |x| x.instance_eval &block } if block_given?
-    # Include module
-    mod_ext = ModExtender.new mod, usable_options
-    mod_ext.use! self
-    mod_ext.use_instance_methods! self
-    mod_ext.use_class_methods! self
-    mod_ext
+    ModExtender.new(mod, usable_options).call self
+    self.include mod.const_get(:InstanceMethods) if self.const_defined? :InstanceMethods
+    self.extend mod.const_get(:ClassMethods) if self.const_defined? :ClassMethods
+    self
   end
 
   # @return [Method] bound to the given -context-

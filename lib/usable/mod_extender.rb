@@ -15,16 +15,9 @@ module Usable
       end
     end
 
-    # @note Destructive, as it changes @copy
-    def override
-      unwanted.each do |method_name|
-        copy.send :remove_method, method_name
-      end
-    end
-
     # @description Directly include a module whose methods you want made available in +usables.available_methods+
     #   Gives the module a name when including so that it shows up properly in the list of ancestors
-    def use!(target)
+    def call(target)
       override
       if copy.name.nil?
         const_name = "#{mod_name}Used"
@@ -33,6 +26,13 @@ module Usable
       end
       target.usables.add_module copy
       target.send options[:method], copy
+    end
+
+    # @note Destructive, as it changes @copy
+    def override
+      unwanted.each do |method_name|
+        copy.send :remove_method, method_name
+      end
     end
 
     # @description Extends the target with the module's ClassMethod mod
