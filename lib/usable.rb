@@ -68,8 +68,8 @@ module Usable
     [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
     [scope, usables].each { |x| x.instance_eval &block } if block_given?
     ModExtender.new(mod, usable_options).call self
-    send :include, mod.const_get(:InstanceMethods) if const_defined? :InstanceMethods
-    send :extend, mod.const_get(:ClassMethods) if const_defined? :ClassMethods
+    send :include, mod.const_get(:InstanceMethods) if mod.const_defined?(:InstanceMethods)
+    send :extend, mod.const_get(:ClassMethods) if mod.const_defined?(:ClassMethods)
     self
   end
 
