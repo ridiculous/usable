@@ -51,7 +51,7 @@ module Usable
   # @param [Hash] options Customize the extension of the module as well as define config settings on the target
   # @option [Array,Symbol]  :only Limit which methods are copied from the module
   # @option [String,Symbol] :method (:include) The method to use for including the module
-  # @return [ModExtender] containing the original and modified module
+  # @return self
   def usable(mod, options = {}, &block)
     usable_options = { only: options.delete(:only), method: options.delete(:method) }
     # Define settings on @usables and on the scoped @usables
