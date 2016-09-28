@@ -49,7 +49,7 @@ module Usable
     end
 
     def respond_to_missing?(method_name, _private = false)
-      method_name.to_s.end_with?('=') || spec.respond_to?(method_name)
+      method_name.to_s.end_with?('=') || @spec.respond_to?(method_name)
     end
 
     module Null
