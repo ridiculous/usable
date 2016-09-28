@@ -113,6 +113,11 @@ Add this line to your application's Gemfile:
 gem 'usable'
 ```
 
+## TODO
+
+[ ] - Support blocks for config values (e.g. `config.user { User.first }`)
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
