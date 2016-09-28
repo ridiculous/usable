@@ -115,7 +115,7 @@ gem 'usable'
 
 ## TODO
 
-[ ] - Support blocks for config values (e.g. `config.user { User.first }`)
+* Support blocks for config values (e.g. `config.user { User.first }`)
 
 
 ## Development
