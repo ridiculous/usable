@@ -64,7 +64,7 @@ module Usable
       scope += mod.usables
       self.usables += mod.usables
     end
-    # any left over -options- are considered "config" settings at this point
+    # any left over -options- are considered "config" settings
     if options
       [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
     end
