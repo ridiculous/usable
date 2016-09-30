@@ -1,6 +1,7 @@
 module Usable
   # Keep track of "used" modules and their "available" methods
-  module ModConfig
+  # Mixin for Config
+  module ConfigRegister
     def available_methods
       modules.each_with_object(Hash.new(Null.instance_method(:default_method))) do |mod, result|
         mod.instance_methods.each do |method_name|

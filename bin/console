@@ -61,6 +61,7 @@ class Example
   usable Mixin
   usable VersionMixin do
     max_versions 10
+    model { Model }
   end
   usable Nested::Extension
 end

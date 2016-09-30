@@ -31,6 +31,19 @@ describe Usable::Config do
     end
   end
 
+  describe 'when defining a value with a block' do
+    it "saves block and evaluates the first time it's called, returning the value" do
+      expect(subject).to_not respond_to(:foo)
+      n = 10
+      subject.foo { n }
+      n += 5
+      expect(subject.foo).to eq 15
+      n += 5
+      # it should be memoized at this point
+      expect(subject.foo).to eq 15
+    end
+  end
+
   describe '#respond_to(_missing)?' do
     context 'when the given -name- ends with "="' do
       it 'returns true' do
