@@ -10,7 +10,7 @@ module Usable
       methods.each do |name|
         config._spec[name] = nil
         config._spec.define_singleton_method(name) do
-          other._spec.singleton_method(name).call
+          other._spec.public_method(name).call
         end
       end
       config
