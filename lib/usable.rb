@@ -2,6 +2,7 @@ require 'ostruct'
 require 'delegate'
 require 'usable/version'
 require 'usable/mod_extender'
+require 'usable/mod_config'
 require 'usable/config'
 
 module Usable
