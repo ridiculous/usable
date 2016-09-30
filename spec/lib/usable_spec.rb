@@ -195,6 +195,53 @@ describe Usable do
         expect { subject.usable mod }.to change { subject.usables[:key] }.from(nil).to('secret')
       end
 
+      context 'with multiple usable mods', block_specs: true do
+        before do
+          spec_mod.extend described_class
+          spec_mod.config do
+            model { Usable::ModExtender }
+            cache_key 'specs:mods'
+          end
+        end
+
+        it "merges the given usables with the subject's" do
+          subject.usable mod
+          subject.usable spec_mod
+          expect(spec_mod.usables.model).to eq(Usable::ModExtender)
+          expect(subject.usables.model).to eq(Usable::ModExtender)
+        end
+
+        it "maintains the laziness of block specs" do
+          n = 10
+          mod.usables.foo { n }
+          subject.usable mod
+          subject.usable spec_mod
+          n += 5
+          expect(mod.usables.foo).to eq 15
+          n += 5
+          # it doesn't change cause it's memoized
+          expect(mod.usables.foo).to eq 15
+          # should load for the first time
+          expect(subject.usables.foo).to eq 20
+          n += 5
+          # it doesn't change cause it's memoized
+          expect(subject.usables.foo).to eq 20
+        end
+
+        context 'when block specs are overridden' do
+          before do
+            mod.usables.foo { :ok }
+            spec_mod.usables.foo { :error }
+          end
+
+          it 'returns the value for the last spec added' do
+            subject.usable spec_mod
+            subject.usable mod
+            expect(subject.usables.foo).to eq :ok
+          end
+        end
+      end
+
       context "when the subject is given settings with the same name as the module's setting" do
         it 'uses the given settings' do
           expect {

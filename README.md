@@ -8,6 +8,7 @@ module VersionMixin
   extend Usable
   config.max_versions = 25
   config.table_name = 'versions'
+  config.model { Audit }
   
   def save_version
     "Saving #{usables.max_versions} #{usables.table_name}"

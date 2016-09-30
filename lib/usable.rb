@@ -2,7 +2,6 @@ require 'ostruct'
 require 'delegate'
 require 'usable/version'
 require 'usable/mod_extender'
-require 'usable/mod_config'
 require 'usable/config'
 
 module Usable
@@ -62,15 +61,23 @@ module Usable
       usables[scope_name] = scope
     end
     if mod.respond_to? :usables
-      mod.usables.each do |k, v|
-        [scope, usables].each { |x| x.spec k, v }
-      end
+      scope += mod.usables
+      self.usables += mod.usables
     end
-    [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
-    [scope, usables].each { |x| x.instance_eval &block } if block_given?
+    # any left over -options- are considered "config" settings at this point
+    if options
+      [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
+    end
+    if block_given?
+      [scope, usables].each { |x| x.instance_eval &block }
+    end
+    if mod.const_defined?(:InstanceMethods)
+      send :include, mod.const_get(:InstanceMethods)
+    end
+    if mod.const_defined?(:ClassMethods)
+      send :extend, mod.const_get(:ClassMethods)
+    end
     ModExtender.new(mod, usable_options).call self
-    send :include, mod.const_get(:InstanceMethods) if mod.const_defined?(:InstanceMethods)
-    send :extend, mod.const_get(:ClassMethods) if mod.const_defined?(:ClassMethods)
     self
   end
 
