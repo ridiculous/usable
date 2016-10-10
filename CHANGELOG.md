@@ -2,5 +2,5 @@
 ==================
 
 * Usable config options can now accept blocks as values, which will be lazy loaded once and memoized for future calls ([PR#6](/ridiculous/usable/pull/6))
-* Fixes a bug in `Config#respond_to_missing#4?` ([Issue#4](/ridiculous/usable/issues/4))
+* Fixes a bug in `Config#respond_to_missing?` ([Issue#4](/ridiculous/usable/issues/4))
 
