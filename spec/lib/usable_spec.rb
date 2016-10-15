@@ -387,4 +387,20 @@ describe Usable do
       end
     end
   end
+
+  describe 'copying usables when extending a usable module' do
+    before do
+      mod.extend Usable
+      mod.usables do
+        host 'localhost'
+      end
+    end
+
+    it 'copies over usables' do
+      expect(subject.usables.available_methods).to be_empty
+      subject.usable mod, method: :extend
+      expect(subject.usables).to respond_to(:host)
+      expect(subject.usables.available_methods).to_not be_empty
+    end
+  end
 end

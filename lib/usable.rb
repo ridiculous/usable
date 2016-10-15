@@ -6,18 +6,20 @@ require 'usable/config'
 
 module Usable
 
-  # @description Define an instance level version of +usables+
   def self.extended(base)
     base.class_eval do
-      def usables
-        self.class.usables
-      end
-
       def usable_method(method_name)
         self.class.usable_method(self, method_name)
       end
     end
-    unless base.is_a? Class
+    if base.is_a? Class
+      # Define an instance level version of +usables+
+      base.class_eval do
+        def usables
+          self.class.usables
+        end
+      end
+    else
       base.instance_eval do
         def config(&block)
           usables(&block)
@@ -53,7 +55,7 @@ module Usable
   # @option [String,Symbol] :method (:include) The method to use for including the module
   # @return self
   def usable(mod, options = {}, &block)
-    usable_options = { only: options.delete(:only), method: options.delete(:method) }
+    ModExtender.new(mod, only: options.delete(:only), method: options.delete(:method)).call self
     # Define settings on @usables and on the scoped @usables
     scope = Config.new
     if mod.name
@@ -77,7 +79,6 @@ module Usable
     if mod.const_defined?(:ClassMethods)
       send :extend, mod.const_get(:ClassMethods)
     end
-    ModExtender.new(mod, usable_options).call self
     self
   end
 
