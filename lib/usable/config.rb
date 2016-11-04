@@ -47,7 +47,7 @@ module Usable
       else
         spec method_name, *args
       end
-    rescue => e
+    rescue NoMethodError
       super
     end
 

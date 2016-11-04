@@ -44,6 +44,18 @@ describe Usable::Config do
     end
   end
 
+  describe '#method_missing' do
+    context 'when an unknown error occurs' do
+      before { subject.model { UndefinedModel } }
+
+      it 'raises the appropriate error' do
+        expect {
+          subject.model
+        }.to raise_error(NameError, 'uninitialized constant UndefinedModel')
+      end
+    end
+  end
+
   describe '#respond_to(_missing)?' do
     context 'when the given -name- ends with "="' do
       it 'returns true' do
