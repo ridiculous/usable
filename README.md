@@ -3,12 +3,16 @@
 Usable provides an elegant way to mount and configure your modules. Class level settings can be configured on a per module basis,
 available to both the module and including class. Allows you to include only the methods you want. 
 
+Configure a module to be usable
 ```ruby
 module VersionMixin
   extend Usable
-  config.max_versions = 25
-  config.table_name = 'versions'
-  config.model { Audit }
+
+  config do
+    max_versions 25
+    table_name 'versions'
+    observer { Class.new }
+  end
   
   def save_version
     "Saving #{usables.max_versions} #{usables.table_name}"
@@ -18,7 +22,10 @@ module VersionMixin
     "Deleting versions from #{usables.table_name}"
   end
 end
+```
 
+Include the module into a class using `usable`, which will copy over any configuration options
+```ruby
 class Model
   extend Usable
 
@@ -32,15 +39,20 @@ class Model
 end
 
 model = Model.new
-model.save_version     # => "Saving 10 versions"
-model.destroy_version  # => NoMethodError: undefined method `destroy_version' for #<Model:...
+model.save_version         # => "Saving 10 versions"
+model.destroy_version      # => NoMethodError: undefined method `destroy_version' for #<Model:...
+model.usables.max_versions # => 10
+model.usables.table_name   # => "version"
 ```
+
 `Model` now has a `#save_versions` method but no `#destroy_version` method. Usable has effectively mixed in the given module
 using `include`. Ruby 2+ offers the `prepend` method, which can be used instead by specifying it as the `:method` option:
 
 ```ruby
 Model.usable VersionMixin, method: :prepend
 ```
+
+A usable module can also be extended onto a class with `method: :extend`
 
 Usable reserves the `:only` and `:method` keys. All other keys in the given hash are defined as config settings. If you really
 want to define a config on the target class with one of these names, you can simply define them in the block:
@@ -114,10 +126,41 @@ Add this line to your application's Gemfile:
 gem 'usable'
 ```
 
-## TODO
+## Tips and Tricks
 
-* Support blocks for config values (e.g. `config.user { User.first }`)
+When usable modules define the same config setting, the last one mounted takes precedence. Fortunately,
+Usable also "stacks" config settings by namespacing them:
 
+```ruby
+module Robot
+  extend Usable
+  config do
+    speak 'beep bop'
+  end
+end
+
+module Human
+  extend Usable
+  config do
+    speak 'Hello'
+  end
+end
+
+class User
+  extend Usable
+  usable Human, Robot
+end
+
+User.usables.speak       # => "beep bop"
+User.usables.human.speak # => "Hello"
+User.usables.robot.speak # => "beep bop"
+```
+
+Import just a module's constants with this little trick:
+
+```ruby
+usable ExampleMod, only: []
+```
 
 ## Development
 
