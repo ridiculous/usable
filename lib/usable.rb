@@ -20,19 +20,21 @@ module Usable
         end
       end
     else
+      # Define +config+ when added to a module
       base.instance_eval do
         def config(&block)
-          usables(&block)
+          if block
+            usables.instance_eval &block
+          else
+            usables
+          end
         end unless defined? config
       end
     end
   end
 
-  # @description Read and write configuration options
   def usables
     @usables ||= Config.new
-    return @usables unless block_given?
-    @usables.instance_eval &Proc.new
   end
 
   attr_writer :usables

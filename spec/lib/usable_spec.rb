@@ -391,7 +391,7 @@ describe Usable do
   describe 'copying usables when extending a usable module' do
     before do
       mod.extend Usable
-      mod.usables do
+      mod.config do
         host 'localhost'
       end
     end
