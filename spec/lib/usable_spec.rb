@@ -86,6 +86,27 @@ describe Usable do
       expect(subject.usable(mod)).to be subject
     end
 
+    context 'when given multiple modules' do
+      before do
+        mod.extend Usable
+        mod.config do
+          versions_size 10
+        end
+        instance_mod.extend Usable
+        instance_mod.config do
+          instance_size 15
+        end
+        subject.usable mod, instance_mod
+      end
+
+      it 'uses all the modules' do
+        expect(subject.new).to respond_to(:versions)
+        expect(subject.new).to respond_to(:from_instance_mod)
+        expect(subject.usables.versions_size).to eq 10
+        expect(subject.usables.instance_size).to eq 15
+      end
+    end
+
     context "when block_given?" do
       it "yields @usables to the given block" do
         expect {

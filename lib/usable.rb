@@ -56,30 +56,33 @@ module Usable
   # @option [Array,Symbol]  :only Limit which methods are copied from the module
   # @option [String,Symbol] :method (:include) The method to use for including the module
   # @return self
-  def usable(mod, options = {}, &block)
-    ModExtender.new(mod, only: options.delete(:only), method: options.delete(:method)).call self
-    # Define settings on @usables and on the scoped @usables
-    scope = Config.new
-    if mod.name
-      scope_name = mod.name.split('::').last.gsub(/\B([A-Z])([a-z_0-9])/, '_\1\2').downcase
-      usables[scope_name] = scope
-    end
-    if mod.respond_to? :usables
-      scope += mod.usables
-      self.usables += mod.usables
-    end
-    # any left over -options- are considered "config" settings
-    if options
-      [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
-    end
-    if block_given?
-      [scope, usables].each { |x| x.instance_eval &block }
-    end
-    if mod.const_defined?(:InstanceMethods)
-      send :include, mod.const_get(:InstanceMethods)
-    end
-    if mod.const_defined?(:ClassMethods)
-      send :extend, mod.const_get(:ClassMethods)
+  def usable(*args, &block)
+    options = args.last.is_a?(Hash) ? args.pop : {}
+    args.each do |mod|
+      ModExtender.new(mod, only: options.delete(:only), method: options.delete(:method)).call self
+      # Define settings on @usables and on the scoped @usables
+      scope = Config.new
+      if mod.name
+        scope_name = mod.name.split('::').last.gsub(/\B([A-Z])([a-z_0-9])/, '_\1\2').downcase
+        usables[scope_name] = scope
+      end
+      if mod.respond_to? :usables
+        scope += mod.usables
+        self.usables += mod.usables
+      end
+      # any left over -options- are considered "config" settings
+      if options
+        [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
+      end
+      if block_given?
+        [scope, usables].each { |x| x.instance_eval &block }
+      end
+      if mod.const_defined?(:InstanceMethods)
+        send :include, mod.const_get(:InstanceMethods)
+      end
+      if mod.const_defined?(:ClassMethods)
+        send :extend, mod.const_get(:ClassMethods)
+      end
     end
     self
   end
