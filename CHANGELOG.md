@@ -1,3 +1,16 @@
+3.0 (11/4/2016)
+===============
+
+* Multiple mods can be given to +usable+ simultaneously
+* The +usables+ method no longer accepts a block (for performance reasons)
+* Fix bug in Config#method_missing that was swallowing errors
+* Fix bug in scoping Instance and Class method mods to the target module
+
+2.2.1 (10/14/2016)
+==================
+
+* Usable config is copied correctly when extending a usable module
+
 2.2.0 (9/30/2016)
 ==================
 
