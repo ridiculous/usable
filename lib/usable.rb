@@ -77,11 +77,11 @@ module Usable
       if block_given?
         [scope, usables].each { |x| x.instance_eval &block }
       end
-      if mod.const_defined?(:InstanceMethods)
-        send :include, mod.const_get(:InstanceMethods)
+      if mod.const_defined?(:InstanceMethods, false)
+        send :include, mod.const_get(:InstanceMethods, false)
       end
-      if mod.const_defined?(:ClassMethods)
-        send :extend, mod.const_get(:ClassMethods)
+      if mod.const_defined?(:ClassMethods, false)
+        send :extend, mod.const_get(:ClassMethods, false)
       end
     end
     self
