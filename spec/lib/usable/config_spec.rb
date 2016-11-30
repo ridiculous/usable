@@ -80,4 +80,27 @@ describe Usable::Config do
       end
     end
   end
+
+  describe 'coercions' do
+    describe '#to_hash' do
+      it 'returns the hash representation of the spec' do
+        expect(subject.to_hash).to eq({})
+        subject.spec :foo, :ok
+        expect(subject.to_hash).to eq foo: :ok
+      end
+    end
+
+    describe '#to_h' do
+      it 'returns the hash representation of the spec' do
+        expect(subject.to_h).to eq({})
+        subject.spec :foo, :ok
+        expect(subject.to_h).to eq foo: :ok
+      end
+
+      it 'does not add to_h as a key to @spec' do
+        expect(subject.to_h).to eq({})
+        expect(subject._spec.marshal_dump).to_not have_key(:to_h)
+      end
+    end
+  end
 end

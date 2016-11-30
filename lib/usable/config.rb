@@ -37,6 +37,12 @@ module Usable
       spec key, val
     end
 
+    def to_h
+      _spec.to_h
+    end
+
+    alias to_hash to_h
+
     def call_lazy_method(key)
       @spec.public_send(key.to_s.tr('=', ''))
     end
