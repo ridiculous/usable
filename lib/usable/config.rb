@@ -10,6 +10,7 @@ module Usable
 
     def initialize
       @spec = OpenStruct.new
+      @lazy_loads = Set.new
     end
 
     def each(&block)
@@ -38,18 +39,21 @@ module Usable
     end
 
     def to_h
+      @lazy_loads.each { |key| spec(key) }
       _spec.to_h
     end
 
     alias to_hash to_h
 
     def call_lazy_method(key)
-      @spec.public_send(key.to_s.tr('=', ''))
+      @lazy_loads.delete key
+      @spec.public_send key.to_s.tr('=', '')
     end
 
     def method_missing(method_name, *args, &block)
       if block
         _spec.define_singleton_method(method_name) { yield }
+        @lazy_loads << method_name
       else
         spec method_name, *args
       end

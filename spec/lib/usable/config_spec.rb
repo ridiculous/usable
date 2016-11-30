@@ -101,6 +101,24 @@ describe Usable::Config do
         expect(subject.to_h).to eq({})
         expect(subject._spec.marshal_dump).to_not have_key(:to_h)
       end
+
+      context 'with block specs' do
+        before do
+          subject.foo { 'bar' }
+          subject.baz = :buzz
+          subject.bad = :ok
+        end
+
+        it 'includes the block value in the result' do
+          expect(subject.to_h).to eq foo: 'bar', baz: :buzz, bad: :ok
+        end
+
+        it 'removes the method from the @lazy_loads cache' do
+          expect(subject.instance_variable_get(:@lazy_loads)).to_not be_empty
+          subject.to_h
+          expect(subject.instance_variable_get(:@lazy_loads)).to be_empty
+        end
+      end
     end
   end
 end

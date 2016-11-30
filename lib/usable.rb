@@ -1,3 +1,4 @@
+require 'set'
 require 'ostruct'
 require 'delegate'
 require 'usable/version'
