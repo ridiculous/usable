@@ -1,3 +1,8 @@
+3.2.1 (pending)
+===============
+
+* FIx `usables.freeze` to also freeze `@spec` so errors are raised when modifying
+
 3.2 (12/1/2016)
 ===============
 

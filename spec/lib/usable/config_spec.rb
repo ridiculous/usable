@@ -160,5 +160,12 @@ describe Usable::Config do
       expect(subject.foo).to eq 'bar'
       expect(subject.baz).to eq :buzz
     end
+
+    it 'raises an error trying to update a attribute' do
+      expect {
+        subject.freeze
+        subject.foo = 42
+      }.to raise_error(RuntimeError, /can't modify frozen/)
+    end
   end
 end

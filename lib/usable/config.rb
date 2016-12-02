@@ -60,6 +60,7 @@ module Usable
 
     def freeze
       to_h.each { |key, value| define_singleton_method(key) { value } }
+      @spec.freeze
       super
     end
 
