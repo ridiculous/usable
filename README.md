@@ -75,10 +75,10 @@ module Mixin
   config do
     country 'US'
     state 'Hawaii'
-    spec :census, {
+    census({
       population: 1_400_00,
-      daily_visitors:  218_150
-    }
+      daily_visitors: 218_150
+    })
   end
 end
 

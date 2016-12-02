@@ -13,56 +13,62 @@ module Usable
       @lazy_loads = Set.new
     end
 
-    def each(&block)
-      @spec.to_h.each(&block)
-    end
-
-    def spec(key, value = nil)
-      if value
-        @spec[key.to_s.tr('=', '')] = value
-      else
-        # Handle the case where the value may be defined with a block, in which case it's a method
-        @spec[key] ||= call_lazy_method(key)
-      end
-    end
-
-    def _spec
+    def spec
       @spec
     end
 
     def [](key)
-      spec key
+      @spec[key]
     end
 
     def []=(key, val)
-      spec key, val
+      @spec[key] = val
+    end
+
+    def each(&block)
+      @spec.to_h.each(&block)
     end
 
     def to_h
-      @lazy_loads.each { |key| spec(key) }
-      _spec.to_h
+      @lazy_loads.each { |key| @spec[key] = call_spec_method(key) }
+      @spec.to_h
     end
 
     alias to_hash to_h
 
-    def call_lazy_method(key)
-      @lazy_loads.delete key
-      @spec.public_send key.to_s.tr('=', '')
-    end
-
-    def method_missing(method_name, *args, &block)
+    def method_missing(key, *args, &block)
       if block
-        _spec.define_singleton_method(method_name) { yield }
-        @lazy_loads << method_name
+        @lazy_loads << key
+        @spec.define_singleton_method(key) { yield }
       else
-        spec method_name, *args
+        key = key.to_s.tr('=', '')
+        if args.empty?
+          value = @spec[key] ||= call_spec_method(key)
+          define_singleton_method(key) { @spec[key] }
+          value
+        else
+          @spec[key] = args.first
+        end
       end
     rescue NoMethodError
       super
     end
 
     def respond_to_missing?(method_name, _private = false)
-      method_name.to_s.end_with?('=') || _spec.respond_to?(method_name)
+      method_name.to_s.end_with?('=') || @spec.respond_to?(method_name)
+    end
+
+    def freeze
+      to_h.each { |key, value| define_singleton_method(key) { value } }
+      super
+    end
+
+    private
+
+    # @note Handles the case where the value may be defined with a block, in which case it's a method
+    def call_spec_method(key)
+      @lazy_loads.delete key
+      @spec.public_send key
     end
   end
 end
