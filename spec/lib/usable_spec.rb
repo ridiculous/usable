@@ -109,11 +109,10 @@ describe Usable do
 
     context "when block_given?" do
       it "yields @usables to the given block" do
-        expect {
-          subject.usable mod do
-            max_versions 10
-          end
-        }.to change(subject.usables, :max_versions).from(nil).to(10)
+        expect(subject.usables).to_not respond_to(:max_versions)
+        subject.usable(mod) { max_versions 10 }
+        expect(subject.usables).to respond_to(:max_versions)
+        expect(subject.usables.max_versions).to eq(10)
       end
 
       it "uses the usables in the method calls" do

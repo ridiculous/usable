@@ -66,7 +66,7 @@ describe Usable::Config do
 
     context 'when the given -name- does not end with a "="' do
       context 'when the -name- is defined on @spec' do
-        before { subject.spec :foo, :ok }
+        before { subject.spec[:foo] = :ok }
 
         it 'returns true' do
           expect(subject).to respond_to :foo
@@ -85,7 +85,7 @@ describe Usable::Config do
     describe '#to_hash' do
       it 'returns the hash representation of the spec' do
         expect(subject.to_hash).to eq({})
-        subject.spec :foo, :ok
+        subject.spec[:foo] = :ok
         expect(subject.to_hash).to eq foo: :ok
       end
     end
@@ -93,13 +93,13 @@ describe Usable::Config do
     describe '#to_h' do
       it 'returns the hash representation of the spec' do
         expect(subject.to_h).to eq({})
-        subject.spec :foo, :ok
+        subject.spec[:foo] = :ok
         expect(subject.to_h).to eq foo: :ok
       end
 
       it 'does not add to_h as a key to @spec' do
         expect(subject.to_h).to eq({})
-        expect(subject._spec.marshal_dump).to_not have_key(:to_h)
+        expect(subject.spec.marshal_dump).to_not have_key(:to_h)
       end
 
       context 'with block specs' do
@@ -119,6 +119,46 @@ describe Usable::Config do
           expect(subject.instance_variable_get(:@lazy_loads)).to be_empty
         end
       end
+    end
+  end
+
+  describe '#each' do
+    before do
+      subject.foo { 'bar' }
+      subject.baz = :buzz
+    end
+
+    it 'renders each item currently in the @spec' do
+      subject.each do |key, val|
+        expect(key).to eq :baz
+        expect(val).to eq :buzz
+      end
+    end
+  end
+
+  describe '#freeze' do
+    before do
+      subject.foo { 'bar' }
+      subject.baz = :buzz
+    end
+
+    it 'freezes the subject' do
+      expect(subject).to_not be_frozen
+      subject.freeze
+      expect(subject).to be_frozen
+    end
+
+    it 'eager-loads any lazy block specs' do
+      expect(subject[:foo]).to eq nil
+      subject.freeze
+      expect(subject[:foo]).to eq 'bar'
+    end
+
+    it 'does not call method_missing after freeze' do
+      expect(subject).to_not receive(:method_missing)
+      subject.freeze
+      expect(subject.foo).to eq 'bar'
+      expect(subject.baz).to eq :buzz
     end
   end
 end

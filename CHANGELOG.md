@@ -1,3 +1,9 @@
+3.2 (12/1/2016)
+===============
+
+* Improve performance of reads by defining usable attributes as methods
+* `usables._spec` is now `usables.spec`
+
 3.1 (11/30/2016)
 ================
 

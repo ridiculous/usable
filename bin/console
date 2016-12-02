@@ -22,7 +22,15 @@ end
 
 module Mixin
   extend Usable
-  usables[:max_versions] = 20
+  config.language = :en
+  config do
+    country 'US'
+    state 'Hawaii'
+    census({
+             population: 1_400_00,
+             daily_visitors: 218_150
+           })
+  end
 
   def name
     "defined by Mixin"

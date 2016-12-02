@@ -4,13 +4,13 @@ module Usable
     # Set block specs to nil values so it will fallback to calling the underlying singleton method defined by Config#method_missing
     def +(other)
       config = clone
-      specs = other._spec.to_h
-      specs.each { |key, val| config.spec key, val }
-      methods = other._spec.singleton_methods - specs.keys
+      specs = other.spec.to_h
+      specs.each { |key, val| config[key] = val }
+      methods = other.spec.singleton_methods - specs.keys
       methods.each do |name|
-        config._spec[name] = nil
-        config._spec.define_singleton_method(name) do
-          other._spec.public_method(name).call
+        config.spec[name] = nil
+        config.spec.define_singleton_method(name) do
+          other.spec.public_method(name).call
         end
       end
       config
