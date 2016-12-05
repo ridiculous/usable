@@ -1,5 +1,5 @@
-3.3.0 (pending)
-===============
+3.3.0 (12/4/2016)
+=================
 
 * FIX - `Usable::ModExtender` doesn't require the target to be "usable"
 * NEW - `Usable::Struct(a: :b)` creates value classes with defaults (optional `require 'usable/struct'`)
