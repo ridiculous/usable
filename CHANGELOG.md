@@ -1,12 +1,12 @@
 3.3.0 (pending)
 ===============
 
-* NEW - `Usable::Struct(a: :b)` for creating value classes with defaults
-(`require 'usable/struct'`)
+* FIX - `Usable::ModExtender` doesn't require the target to be "usable"
+* NEW - `Usable::Struct(a: :b)` creates value classes with defaults (optional `require 'usable/struct'`)
 * NEW - `usables.merge` converts usables to a hash and merges w/ the other
 * NEW - Usable::Config#initialize takes a hash to set the initial attributes
 * NEW - Usable politely defines `.config(&block)`
-* FIx `usables.freeze` to also freeze `@spec` so errors are raised when modifying
+* FIX - `usables.freeze` to also freeze `@spec` so errors are raised when modifying
 
 3.2 (12/1/2016)
 ===============

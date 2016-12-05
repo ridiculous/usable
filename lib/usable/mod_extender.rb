@@ -26,7 +26,7 @@ module Usable
         target.send :remove_const, const_name if target.const_defined? const_name, false
         target.const_set const_name, copy
       end
-      target.usables.add_module copy
+      target.usables.add_module copy if target.respond_to?(:usables)
       target.send options[:method], copy
     end
 

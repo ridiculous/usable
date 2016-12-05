@@ -1,5 +1,7 @@
 require 'spec_helper'
-require 'usable/struct'
+unless require 'usable/struct'
+  puts %Q(INFO: We've already included Usable::Struct, you can now remove "#{__FILE__}:#{__LINE__}")
+end
 
 describe 'Usable::Struct()' do
   class TestStruct < Usable::Struct(name: 'Ryan', age: 29, contact: false)
