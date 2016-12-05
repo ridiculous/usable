@@ -49,28 +49,54 @@ describe Usable do
 
   after(:each) { subject.usables = nil }
 
-  context 'when extending a module with Usable' do
-    it 'defines +config+ which delegates to +usables+ for setting configuration' do
-      spec_mod.extend Usable
-      spec_mod.config do
-        language :en
+  describe '.extended' do
+    context 'to another module' do
+      it 'defines +config+ which delegates to +usables+ for setting configuration' do
+        spec_mod.extend Usable
+        spec_mod.config do
+          language :en
+        end
+        spec_mod.config.country = 'US'
+        expect(spec_mod.usables.country).to eq 'US'
+        expect(spec_mod.usables.language).to eq :en
+        expect(spec_mod.config).to be spec_mod.usables
       end
-      spec_mod.config.country = 'US'
-      expect(spec_mod.usables.country).to eq 'US'
-      expect(spec_mod.usables.language).to eq :en
-      expect(spec_mod.config).to be spec_mod.usables
+
+      context 'when the module already defines +config+' do
+        before do
+          def spec_mod.config
+            'existing config'
+          end
+        end
+
+        it 'does not overwrite the existing method' do
+          spec_mod.extend Usable
+          expect(spec_mod.config).to eq 'existing config'
+        end
+      end
     end
 
-    context 'when the module already defines +config+' do
+    context 'to a class' do
       before do
-        def spec_mod.config
-          'existing config'
+        subject.config do
+          foo :bar
         end
       end
 
-      it 'does not overwrite the existing method' do
-        spec_mod.extend Usable
-        expect(spec_mod.config).to eq 'existing config'
+      it 'defines a +config+ class method' do
+        expect(subject).to respond_to :config
+        expect(subject.config.foo).to eq :bar
+        expect(subject.usables.foo).to eq :bar
+      end
+
+      it 'defines +usables+ on the instance' do
+        expect(subject.new).to respond_to :usables
+        expect(subject.new.usables.foo).to eq :bar
+      end
+
+      it 'defines +usable_method+ on the instance' do
+        subject.usables.name
+        expect(subject.new).to respond_to :usable_method
       end
     end
   end

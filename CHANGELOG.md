@@ -1,6 +1,7 @@
 3.2.1 (pending)
 ===============
 
+* NEW - Usable politely defines `.config(&block)`
 * FIx `usables.freeze` to also freeze `@spec` so errors are raised when modifying
 
 3.2 (12/1/2016)

@@ -6,22 +6,21 @@ require 'usable/mod_extender'
 require 'usable/config'
 
 module Usable
-
   def self.extended(base)
-    base.class_eval do
-      def usable_method(method_name)
-        self.class.usable_method(self, method_name)
-      end
-    end
     if base.is_a? Class
       # Define an instance level version of +usables+
       base.class_eval do
         def usables
           self.class.usables
         end
+
+        def usable_method(method_name)
+          self.class.usable_method(self, method_name)
+        end
       end
-    else
-      # Define +config+ when added to a module
+    end
+
+    unless base.respond_to?(:config)
       base.instance_eval do
         def config(&block)
           if block
@@ -29,7 +28,7 @@ module Usable
           else
             usables
           end
-        end unless defined? config
+        end
       end
     end
   end
