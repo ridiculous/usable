@@ -2,6 +2,8 @@
 
 require "bundler/setup"
 require "usable"
+require "usable/struct"
+require "irb"
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
@@ -75,7 +77,5 @@ class Example
 end
 
 Model.usable PersistenceOverride, method: 'prepend'
-
-require "irb"
 
 IRB.start

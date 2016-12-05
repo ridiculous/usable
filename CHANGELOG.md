@@ -1,6 +1,8 @@
-3.2.1 (pending)
+3.3.0 (pending)
 ===============
 
+* NEW - `Usable::Struct(a: :b)` for creating value classes with defaults
+(`require 'usable/struct'`)
 * NEW - `usables.merge` converts usables to a hash and merges w/ the other
 * NEW - Usable::Config#initialize takes a hash to set the initial attributes
 * NEW - Usable politely defines `.config(&block)`
