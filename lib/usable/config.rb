@@ -8,9 +8,10 @@ module Usable
     include ConfigRegister
     include ConfigMulti
 
-    def initialize
-      @spec = OpenStruct.new
+    def initialize(attributes = {})
+      @spec = OpenStruct.new(attributes)
       @lazy_loads = Set.new
+      # @attributes = Set.new attributes.keys.map(&:to_s)
     end
 
     def spec
@@ -36,12 +37,18 @@ module Usable
 
     alias to_hash to_h
 
+    def merge(other)
+      to_h.merge(other)
+    end
+
     def method_missing(key, *args, &block)
       if block
         @lazy_loads << key
+        # @attributes << key.to_s
         @spec.define_singleton_method(key) { yield }
       else
         key = key.to_s.tr('=', '')
+        # @attributes << key
         if args.empty?
           value = @spec[key] ||= call_spec_method(key)
           define_singleton_method(key) { @spec[key] }

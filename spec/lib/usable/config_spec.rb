@@ -122,6 +122,27 @@ describe Usable::Config do
     end
   end
 
+  describe '#merge' do
+    before do
+      subject.foo { 'bar' }
+      subject.buzz = :ok
+    end
+
+    it 'returns a new hash with the given attributes merged in with the defaults' do
+      expect(subject.merge(buzz: :off)).to eq(foo: 'bar', buzz: :off)
+      expect(subject.merge(foo: nil)).to eq(foo: nil, buzz: :ok)
+      expect(subject.foo).to eq 'bar'
+      expect(subject[:buzz]).to eq :ok
+    end
+  end
+
+  describe '#initialize' do
+    it 'assigns the given options as specs' do
+      subject = described_class.new foo: 'bar'
+      expect(subject.foo).to eq 'bar'
+    end
+  end
+
   describe '#each' do
     before do
       subject.foo { 'bar' }

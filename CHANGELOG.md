@@ -1,6 +1,8 @@
 3.2.1 (pending)
 ===============
 
+* NEW - `usables.merge` converts usables to a hash and merges w/ the other
+* NEW - Usable::Config#initialize takes a hash to set the initial attributes
 * NEW - Usable politely defines `.config(&block)`
 * FIx `usables.freeze` to also freeze `@spec` so errors are raised when modifying
 
