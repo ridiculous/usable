@@ -156,10 +156,10 @@ User.usables.human.speak # => "Hello"
 User.usables.robot.speak # => "beep bop"
 ```
 
-Import just a module's constants with this little trick:
+Import just a module's constants:
 
 ```ruby
-usable ExampleMod, only: []
+usable ExampleMod, only: :constants
 ```
 
 ## Development
