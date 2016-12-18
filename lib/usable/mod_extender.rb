@@ -9,7 +9,7 @@ module Usable
       @options[:method] ||= :include
       @copy = mod
       @name = mod.name
-      @unwanted = options[:only] ? @copy.instance_methods - Array(options[:only]) : []
+      @unwanted = find_unwanted_methods(options[:only])
       if @unwanted.any?
         @copy = @copy.dup
       end
@@ -35,6 +35,15 @@ module Usable
         name.split('::').last
       else
         "UsableMod#{Time.now.strftime('%s')}"
+      end
+    end
+
+    def find_unwanted_methods(only)
+      return [] unless only
+      if :constants == only
+        @copy.instance_methods
+      else
+        @copy.instance_methods - Array(only)
       end
     end
   end

@@ -16,6 +16,8 @@ describe Usable do
       def latest_version
         'here i am'
       end
+      const_set :TEST_CONST, 1
+      const_set :InnerTestClass, Class.new
     end
   end
 
@@ -447,6 +449,36 @@ describe Usable do
       subject.usable mod, method: :extend
       expect(subject.usables).to respond_to(:host)
       expect(subject.usables.available_methods).to_not be_empty
+    end
+  end
+
+  describe 'importing constants' do
+    context 'when :constants is passed to the :only option' do
+      it "imports the constants from the mod into the target's namespace" do
+        expect(subject.constants).not_to include :TEST_CONST, :InnerTestClass
+        subject.usable mod, only: :constants
+        expect(subject.constants).to include :TEST_CONST, :InnerTestClass
+      end
+
+      it "does not import any methods" do
+        expect {
+          subject.usable mod, only: :constants
+        }.to_not change(subject, :methods)
+      end
+    end
+
+    context 'when an empty array is given as the :only option' do
+      it "imports the constants from the mod into the target's namespace" do
+        expect(subject.constants).not_to include :TEST_CONST, :InnerTestClass
+        subject.usable mod, only: []
+        expect(subject.constants).to include :TEST_CONST, :InnerTestClass
+      end
+
+      it "does not import any methods" do
+        expect {
+          subject.usable mod, only: []
+        }.to_not change(subject, :methods)
+      end
     end
   end
 end

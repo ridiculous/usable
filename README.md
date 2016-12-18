@@ -3,7 +3,17 @@
 Usable provides an elegant way to mount and configure your modules. Class level settings can be configured on a per module basis,
 available to both the module and including class. Allows you to include only the methods you want. 
 
-Configure a module to be usable
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'usable'
+```
+
+## Usage
+
+Configure a module to have "usable" defaults:
 ```ruby
 module VersionMixin
   extend Usable
@@ -24,7 +34,7 @@ module VersionMixin
 end
 ```
 
-Include the module into a class using `usable`, which will copy over any configuration options
+Include the module into a class using `usable`, which will copy over the configs:
 ```ruby
 class Model
   extend Usable
@@ -118,15 +128,32 @@ So Usable gives the modified module a name, which is the same name as the origin
 Mixin => MixinUsed
 ```
 
-## Installation
+## Tips and Tricks
 
-Add this line to your application's Gemfile:
+#### __3.4__ _-(unreleased)_
+
+Import just a module's constants:
 
 ```ruby
-gem 'usable'
+usable ExampleMod, only: :constants
 ```
 
-## Tips and Tricks
+Currently works with `usable ExampleMod, only: []` since version 2.0
+
+#### __since version 3.3__ _- (not required)_
+The `Usable::Struct` function is available for creating value objects with defaults. If you `require "usable/struct"` the
+class function is available to create classes:
+
+```ruby
+class Route < Usable::Struct(paths: %w[api v2 v3])
+end
+
+Route.usables.to_h          # => {:paths=>["api", "v2", "v3"]}
+Route.new.paths             # => ["api", "v2", "v3"] 
+Route.new(paths: nil).paths # => nil
+```
+
+#### __since version 2.0__
 
 When usable modules define the same config setting, the last one mounted takes precedence. Fortunately,
 Usable also "stacks" config settings by namespacing them:
@@ -154,12 +181,6 @@ end
 User.usables.speak       # => "beep bop"
 User.usables.human.speak # => "Hello"
 User.usables.robot.speak # => "beep bop"
-```
-
-Import just a module's constants with this little trick:
-
-```ruby
-usable ExampleMod, only: []
 ```
 
 ## Development
