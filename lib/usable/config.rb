@@ -11,6 +11,7 @@ module Usable
     def initialize(attributes = {})
       @spec = OpenStruct.new(attributes)
       @lazy_loads = Set.new
+      # @todo Maybe keep a list of all attributes (lazy and regular)?
       # @attributes = Set.new attributes.keys.map(&:to_s)
     end
 

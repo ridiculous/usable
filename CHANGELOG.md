@@ -1,6 +1,7 @@
 3.4.0 (pending)
 ===============
 
+* FIX - Copying usable attributes from a module to class/module works as expected
 * NEW - Pass `only: :constants` when mounting a module to import just the constants from a module
 
 3.3.0 (12/4/2016)

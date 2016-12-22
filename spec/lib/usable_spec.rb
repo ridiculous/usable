@@ -16,6 +16,7 @@ describe Usable do
       def latest_version
         'here i am'
       end
+
       const_set :TEST_CONST, 1
       const_set :InnerTestClass, Class.new
     end
@@ -243,11 +244,15 @@ describe Usable do
         expect { subject.usable mod }.to change { subject.usables[:key] }.from(nil).to('secret')
       end
 
+      it 'copies the usable config settings over to the subject' do
+        expect { subject.usable mod }.to change { subject.usables.key }.from(nil).to('secret')
+      end
+
       context 'with multiple usable mods', block_specs: true do
         before do
           spec_mod.extend described_class
           spec_mod.config do
-            model { Usable::ModExtender }
+            model { NilClass }
             cache_key 'specs:mods'
           end
         end
@@ -255,8 +260,8 @@ describe Usable do
         it "merges the given usables with the subject's" do
           subject.usable mod
           subject.usable spec_mod
-          expect(spec_mod.usables.model).to eq(Usable::ModExtender)
-          expect(subject.usables.model).to eq(Usable::ModExtender)
+          expect(spec_mod.usables.model).to eq(NilClass)
+          expect(subject.usables.model).to eq(NilClass)
         end
 
         it "maintains the laziness of block specs" do
@@ -274,6 +279,12 @@ describe Usable do
           n += 5
           # it doesn't change cause it's memoized
           expect(subject.usables.foo).to eq 20
+        end
+
+        it 'copies just the usable attributes defined on the mod' do
+          subject.usable mod
+          subject.usable spec_mod
+          expect(subject.usables.to_h).to eq key: 'secret', cache_key: 'specs:mods', model: NilClass
         end
 
         context 'when block specs are overridden' do
