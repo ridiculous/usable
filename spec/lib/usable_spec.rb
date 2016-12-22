@@ -299,6 +299,19 @@ describe Usable do
             expect(subject.usables.foo).to eq :ok
           end
         end
+
+        it 'copies over the correct @lazy_loads' do
+          subject.usable mod
+          subject.usable spec_mod
+          expect(subject.usables.instance_variable_get(:@lazy_loads).to_a).to eq [:model]
+        end
+
+        it 'clears @lazy_loads after calling it' do
+          subject.usable mod
+          subject.usable spec_mod
+          subject.usables.model
+          expect(subject.usables.instance_variable_get(:@lazy_loads).to_a).to eq []
+        end
       end
 
       context "when the subject is given settings with the same name as the module's setting" do

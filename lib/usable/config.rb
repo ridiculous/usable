@@ -8,10 +8,10 @@ module Usable
     include ConfigRegister
     include ConfigMulti
 
+    # @todo Maybe keep a list of all attributes (lazy and regular)?
     def initialize(attributes = {})
       @spec = OpenStruct.new(attributes)
       @lazy_loads = Set.new
-      # @todo Maybe keep a list of all attributes (lazy and regular)?
       # @attributes = Set.new attributes.keys.map(&:to_s)
     end
 
@@ -43,17 +43,23 @@ module Usable
     end
 
     def method_missing(key, *args, &block)
+      # @attributes << key.to_s
       if block
         @lazy_loads << key
-        # @attributes << key.to_s
         @spec.define_singleton_method(key) { yield }
       else
-        key = key.to_s.tr('=', '')
-        # @attributes << key
+        # Needs to be a symbol so we can consistently access @lazy_loads
+        key = key.to_s.tr('=', '').to_sym
         if args.empty?
-          value = @spec[key] ||= call_spec_method(key)
+          if @spec[key]
+            # Cleanup, just in case we loaded it another way (e.g. combining with another usable config)
+            @lazy_loads.delete key
+          else
+            @spec[key] = call_spec_method(key)
+          end
+          # Define method so we don't hit method missing again
           define_singleton_method(key) { @spec[key] }
-          value
+          @spec[key]
         else
           @spec[key] = args.first
         end

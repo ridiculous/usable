@@ -3,6 +3,7 @@
 require "bundler/setup"
 require "usable"
 require "usable/struct"
+require "byebug"
 require "irb"
 
 # You can add fixtures and/or initialization code here to make experimenting
@@ -77,5 +78,22 @@ class Example
 end
 
 Model.usable PersistenceOverride, method: 'prepend'
+
+def run_tests(subject)
+  if subject.usables.instance_variable_get(:@lazy_loads).to_a != [:model]
+    puts "Test @lazy_loads FAILED! Expected: #{[:model]}, Actual: #{subject.usables.instance_variable_get(:@lazy_loads)}"
+  end
+  if subject.usables.model != Model
+    puts "Test #model FAILED! Expected: #{Model}, Actual: #{subject.usables.model}"
+  end
+  if subject.usables.max_versions != 10
+    puts "Test #max_version FAILED! Expected: #{10}, Actual: #{subject.usables.max_versions}"
+  end
+  if subject.usables.model.new.save != 'nope'
+    puts "Test #save FAILED! Expected: 'nope', Actual: #{subject.usables.model.new.save}"
+  end
+end
+
+run_tests Example
 
 IRB.start

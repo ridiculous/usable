@@ -5,9 +5,10 @@ module Usable
       config = clone
       specs = other.spec.to_h
       specs.each { |key, val| config[key] = val }
-      methods = other.spec.singleton_methods - specs.keys
+      methods = other.spec.singleton_methods
       methods.map! { |name| name.to_s.tr('=', '').to_sym }
       methods.uniq!
+      methods -= specs.keys
       methods.each do |name|
         config.spec.define_singleton_method(name) do
           other.spec.public_method(name).call
