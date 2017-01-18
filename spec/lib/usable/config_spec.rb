@@ -189,4 +189,20 @@ describe Usable::Config do
       }.to raise_error(RuntimeError, /can't modify frozen/)
     end
   end
+
+  describe 'marshalling' do
+    before do
+      subject.foo { 'bar' }
+      subject.baz = :buzz
+    end
+
+    it 'can be marshalled' do
+      new_config = Marshal.load(Marshal.dump(subject))
+      expect(new_config.baz).to eq :buzz
+      expect(new_config.foo).to eq 'bar'
+      new_config.foo << 's'
+      expect(new_config.foo).to eq 'bars'
+      expect(subject.foo).to eq 'bar'
+    end
+  end
 end

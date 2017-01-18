@@ -8,11 +8,10 @@ module Usable
     include ConfigRegister
     include ConfigMulti
 
-    # @todo Maybe keep a list of all attributes (lazy and regular)?
+    # @todo Maybe keep a list of all attributes (lazy and regular)? e.g @attributes = Set.new attributes.keys.map(&:to_s)
     def initialize(attributes = {})
       @spec = OpenStruct.new(attributes)
       @lazy_loads = Set.new
-      # @attributes = Set.new attributes.keys.map(&:to_s)
     end
 
     def spec
@@ -37,13 +36,13 @@ module Usable
     end
 
     alias to_hash to_h
+    alias marshal_dump to_h
 
     def merge(other)
       to_h.merge(other)
     end
 
     def method_missing(key, *args, &block)
-      # @attributes << key.to_s
       if block
         @lazy_loads << key
         @spec.define_singleton_method(key) { yield }
@@ -76,6 +75,10 @@ module Usable
       to_h.each { |key, value| define_singleton_method(key) { value } }
       @spec.freeze
       super
+    end
+
+    def marshal_load(attributes = {})
+      initialize(attributes)
     end
 
     private
