@@ -6,6 +6,11 @@ require 'usable/mod_extender'
 require 'usable/config'
 
 module Usable
+  # Keep track of extended classes and modules so we can freeze all usables on boot in production environments
+  def self.extended_constants
+    @extended_constants ||= Set.new
+  end
+
   def self.extended(base)
     if base.is_a? Class
       # Define an instance level version of +usables+
@@ -31,6 +36,7 @@ module Usable
         end
       end
     end
+    extended_constants << base
   end
 
   def usables

@@ -53,6 +53,13 @@ describe Usable do
   after(:each) { subject.usables = nil }
 
   describe '.extended' do
+    it "adds the base class to it's list of @extended_constants" do
+      described_class.extended_constants.clear
+      expect(described_class.extended_constants.to_a).to eq []
+      mod.extend Usable
+      expect(described_class.extended_constants.to_a).to eq [mod]
+    end
+
     context 'to another module' do
       it 'defines +config+ which delegates to +usables+ for setting configuration' do
         spec_mod.extend Usable
