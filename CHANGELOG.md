@@ -1,3 +1,9 @@
+3.5.0 (1/18/2016)
+=================
+
+* FIX - Can marshal Usable configs
+* NEW - Track extended modules and constants so they can be eagerloaded and frozen in certain environments
+
 3.4.0 (12/22/2016)
 ==================
 
