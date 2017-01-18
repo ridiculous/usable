@@ -39,6 +39,12 @@ module Usable
     extended_constants << base
   end
 
+  def inherited(base)
+    base.usables += usables
+    Usable.extended_constants << base
+    super
+  end
+
   def usables
     @usables ||= Config.new
   end
