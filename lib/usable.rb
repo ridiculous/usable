@@ -11,6 +11,12 @@ module Usable
     @extended_constants ||= Set.new
   end
 
+  def self.freeze
+    extended_constants.each { |const| const.usables.freeze }
+    extended_constants.freeze
+    super
+  end
+
   def self.extended(base)
     if base.is_a? Class
       # Define an instance level version of +usables+
@@ -104,3 +110,5 @@ module Usable
     usables.available_methods[method_name].bind(context)
   end
 end
+
+require 'usable/railtie' if defined?(Rails::Railtie)

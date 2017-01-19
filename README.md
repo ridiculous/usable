@@ -130,7 +130,15 @@ Mixin => MixinUsed
 
 ## Tips and Tricks
 
-#### __3.4__ _-(unreleased)_
+#### __since 3.6__
+
+Eager-load and freeze usables in production Rails environments with the `frozen` setting:
+
+```ruby
+config.usable_config.frozen = true
+```
+
+#### __since 3.4__
 
 Import just a module's constants:
 
@@ -140,7 +148,7 @@ usable ExampleMod, only: :constants
 
 Currently works with `usable ExampleMod, only: []` since version 2.0
 
-#### __since version 3.3__ _- (not required)_
+#### __since 3.3__ _- (not required)_
 The `Usable::Struct` function is available for creating value objects with defaults. If you `require "usable/struct"` the
 class function is available to create classes:
 
@@ -181,6 +189,21 @@ end
 User.usables.speak       # => "beep bop"
 User.usables.human.speak # => "Hello"
 User.usables.robot.speak # => "beep bop"
+```
+
+## Production
+
+When running in production you may want to eager-load any lazily defined attributes and freeze them, ensuring thread safety.
+Usable provides a [railtie](http://edgeguides.rubyonrails.org/configuring.html) that can be configured to freeze Usable and
+and constants extended with Usable.
+
+Enable the frozen setting:
+```ruby
+# config/production.rb
+Acme::Application.configure do
+  # Freeze all +usables+ after initialize, eager-loading any lazily defined attributes
+  config.usable_config.frozen = true
+end
 ```
 
 ## Development

@@ -37,6 +37,7 @@ module Usable
 
     alias to_hash to_h
     alias marshal_dump to_h
+    alias marshal_load initialize
 
     def merge(other)
       to_h.merge(other)
@@ -75,10 +76,6 @@ module Usable
       to_h.each { |key, value| define_singleton_method(key) { value } }
       @spec.freeze
       super
-    end
-
-    def marshal_load(attributes = {})
-      initialize(attributes)
     end
 
     private
