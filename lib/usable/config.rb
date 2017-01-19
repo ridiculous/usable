@@ -78,6 +78,16 @@ module Usable
       super
     end
 
+    def inspect
+      nested, locals = @spec.to_h.partition { |_, value| value.is_a?(Usable::Config) }
+      nested.map! { |key, _| [key, '{...}'] }
+      locals.concat nested
+      locals.map! { |key, v| %(@#{key}=#{v.inspect}) }
+      "<Usable::Config:0x00#{(object_id << 1).to_s(16)} #{locals.join(', ')}>"
+    end
+
+    alias to_s inspect
+
     private
 
     # @note Handles the case where the value may be defined with a block, in which case it's a method
