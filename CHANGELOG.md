@@ -1,3 +1,9 @@
+3.6.0 (1/19/2016)
+=================
+
+* NEW - Add Rails setting `usable_config.frozen` to freeze Usable in a after initialize Railtie
+* NEW - Add inherited hook to copy usable config to subclasses
+
 3.5.0 (1/18/2016)
 =================
 
