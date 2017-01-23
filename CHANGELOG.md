@@ -1,3 +1,8 @@
+3.6.1 (1/23/2016)
+=================
+
+* Fix issue with trying to modify Usable.extended_constants when freezing Usable because it may eager-load subclasses of a class that extends Usable
+
 3.6.0 (1/19/2016)
 =================
 

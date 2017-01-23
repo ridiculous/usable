@@ -12,9 +12,10 @@ module Usable
   end
 
   def self.freeze
+    super
     extended_constants.each { |const| const.usables.freeze }
     extended_constants.freeze
-    super
+    self
   end
 
   def self.extended(base)
@@ -42,12 +43,14 @@ module Usable
         end
       end
     end
-    extended_constants << base
+    extended_constants << base unless Usable.frozen?
   end
 
   def inherited(base)
-    base.usables += usables
-    Usable.extended_constants << base
+    unless Usable.frozen?
+      base.usables += usables
+      Usable.extended_constants << base
+    end
     super
   end
 

@@ -83,7 +83,8 @@ module Usable
       nested.map! { |key, _| [key, '{...}'] }
       locals.concat nested
       locals.map! { |key, v| %(@#{key}=#{v.inspect}) }
-      "<Usable::Config:0x00#{(object_id << 1).to_s(16)} #{locals.join(', ')}>"
+      vars = locals.any? ? ' ' + locals.join(', ') : ''
+      "<Usable::Config:0x00#{(object_id << 1).to_s(16)}#{vars}>"
     end
 
     alias to_s inspect

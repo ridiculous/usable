@@ -1,8 +1,9 @@
 require "spec_helper"
 
 describe Usable do
-  subject { Class.new { extend ::Usable } }
+  subject { Class.new(super_class) { extend ::Usable } }
 
+  let(:super_class) { Class.new }
   let(:mod) do
     Module.new do
       def versions
@@ -60,6 +61,17 @@ describe Usable do
       expect(described_class.extended_constants.to_a).to eq [mod]
     end
 
+    context 'when frozen' do
+      before { allow(Usable).to receive(:frozen?).and_return(true) }
+
+      it 'does not add the subclass to the list of extended constants' do
+        described_class.extended_constants.clear
+        expect(described_class.extended_constants.to_a).to eq []
+        mod.extend Usable
+        expect(described_class.extended_constants.to_a).to eq []
+      end
+    end
+
     context 'to another module' do
       it 'defines +config+ which delegates to +usables+ for setting configuration' do
         spec_mod.extend Usable
@@ -107,6 +119,47 @@ describe Usable do
       it 'defines +usable_method+ on the instance' do
         subject.usables.name
         expect(subject.new).to respond_to :usable_method
+      end
+    end
+  end
+
+  describe '.inherited' do
+    let(:subclass) { Class.new(subject) }
+
+    before do
+      # add some usables
+      subject.usables.foo { :ok }
+    end
+
+    context 'when not frozen' do
+      it 'adds the subclass to the list of extended constants' do
+        expect(Usable.extended_constants).to include(subclass)
+      end
+
+      it 'copies the @usables to the subclass' do
+        expect(subclass.usables.foo).to eq :ok
+      end
+
+      it 'calls super' do
+        expect(super_class).to receive(:inherited)
+        subclass
+      end
+    end
+
+    context 'when frozen' do
+      before { allow(Usable).to receive(:frozen?).and_return(true) }
+
+      it 'does not copy usables to subclass' do
+        expect(subclass.usables.foo).to eq nil
+      end
+
+      it 'does not add the subclass to the list of extended constants' do
+        expect(Usable.extended_constants).to_not include(subclass)
+      end
+
+      it 'calls super' do
+        expect(super_class).to receive(:inherited)
+        subclass
       end
     end
   end
