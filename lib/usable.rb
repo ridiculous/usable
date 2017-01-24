@@ -6,15 +6,32 @@ require 'usable/mod_extender'
 require 'usable/config'
 
 module Usable
+  def self.logger
+    @logger ||= begin
+      require 'logger'
+      Logger.new(STDOUT).tap do |config|
+        config.formatter = proc { |*args| "[#{name}] #{args[0]}: #{args[-1]}\n" }
+        config.level = Logger::ERROR
+      end
+    end
+  end
+
+  def self.logger=(obj)
+    @logger = obj
+  end
+
   # Keep track of extended classes and modules so we can freeze all usables on boot in production environments
   def self.extended_constants
     @extended_constants ||= Set.new
   end
 
   def self.freeze
+    logger.debug { "freezing! #{extended_constants.to_a}" }
+    extended_constants
     super
+    # This may eager load classes, which is why we freeze ourselves first,
+    # so the +extended+ hook doesn't try to modify @extended_constants while we're iterating over it
     extended_constants.each { |const| const.usables.freeze }
-    extended_constants.freeze
     self
   end
 

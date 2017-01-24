@@ -1,7 +1,8 @@
 3.6.2 (1/23/2016)
 =================
 
-* Fix Railtie to always run after eager load
+* Update Railtie to _always_ freeze Usable _after_ `Rails.application.eager_load!`
+* Add `Usable.logger` to help debugging (default level: `Logger::ERROR`)
 
 3.6.1 (1/23/2016)
 =================
