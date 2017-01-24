@@ -132,7 +132,8 @@ Mixin => MixinUsed
 
 #### __since 3.6__
 
-Eager-load and freeze usables in production Rails environments with the `frozen` setting:
+Eager-load and freeze usables in production Rails environments with the `frozen` setting. Note that `config.cache_classes`
+(Rails 3+) or `config.eager_load` (Rails 4+) must also be true, since it hooks into Rails' eager load process.
 
 ```ruby
 config.usable_config.frozen = true
