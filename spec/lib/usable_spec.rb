@@ -549,6 +549,26 @@ describe Usable do
     end
   end
 
+  describe 'copying usables when including a usable module' do
+    before do
+      mod.extend Usable
+      mod.config do
+        host 'localhost'
+      end
+    end
+
+    it 'includes the module with usable' do
+      expect(spec_mod).to_not respond_to :usables
+      spec_mod.include mod
+      expect(spec_mod).to respond_to :usables
+    end
+
+    it 'copies the usables to the included module' do
+      spec_mod.include mod
+      expect(spec_mod.usables.host).to eq 'localhost'
+    end
+  end
+
   describe 'importing constants' do
     context 'when :constants is passed to the :only option' do
       it "imports the constants from the mod into the target's namespace" do

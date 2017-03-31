@@ -76,7 +76,13 @@ module Usable
   end
 
   def extended(base)
-    base.extend Usable unless base.respond_to?(:usables)
+    base.extend(Usable) unless base.respond_to?(:usables)
+    Usable.copy_usables(self, base)
+    super
+  end
+
+  def included(base)
+    base.extend(Usable) unless base.respond_to?(:usables)
     Usable.copy_usables(self, base)
     super
   end
