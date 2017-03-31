@@ -1,3 +1,9 @@
+3.7.0 (3/31/2016)
+=================
+
+* Usable modules will extend child modules with Usable and then copy their `usables` over (via `extended` and `included` hooks)
+* Slim down files bundled into gem to only core files required
+
 3.6.2 (1/23/2016)
 =================
 
