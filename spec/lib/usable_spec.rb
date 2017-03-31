@@ -534,6 +534,19 @@ describe Usable do
       expect(subject.usables).to respond_to(:host)
       expect(subject.usables.available_methods).to_not be_empty
     end
+
+    describe 'when a usable module is extended' do
+      it 'extends the module with usable' do
+        expect(spec_mod).to_not respond_to :usables
+        spec_mod.extend mod
+        expect(spec_mod).to respond_to :usables
+      end
+
+      it 'copies the usables to the extended module' do
+        spec_mod.extend mod
+        expect(spec_mod.usables.host).to eq 'localhost'
+      end
+    end
   end
 
   describe 'importing constants' do

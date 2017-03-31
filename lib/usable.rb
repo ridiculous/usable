@@ -63,11 +63,21 @@ module Usable
     extended_constants << base unless Usable.frozen?
   end
 
-  def inherited(base)
+  def self.copy_usables(context, recipient)
     unless Usable.frozen?
-      base.usables += usables
-      Usable.extended_constants << base
+      recipient.usables += context.usables
+      Usable.extended_constants << recipient
     end
+  end
+
+  def inherited(base)
+    Usable.copy_usables(self, base)
+    super
+  end
+
+  def extended(base)
+    base.extend Usable unless base.respond_to?(:usables)
+    Usable.copy_usables(self, base)
     super
   end
 
