@@ -1,3 +1,8 @@
+3.7.1 (4/3/2016)
+=================
+
+* Fix segfault when extending module that extends self
+
 3.7.0 (3/31/2016)
 =================
 
