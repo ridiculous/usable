@@ -525,6 +525,7 @@ describe Usable do
       mod.extend Usable
       mod.config do
         host 'localhost'
+        start_timer { Time.at 0 }
       end
     end
 
@@ -545,6 +546,20 @@ describe Usable do
       it 'copies the usables to the extended module' do
         spec_mod.extend mod
         expect(spec_mod.usables.host).to eq 'localhost'
+      end
+    end
+
+    describe 'when host module has extended self' do
+      before do
+        mod.extend mod
+      end
+
+      it 'does not segfault' do
+        expect { mod.usables.to_h }.to_not raise_error
+      end
+
+      it 'returns the correct representation of the combined usables' do
+        expect(mod.usables.to_h).to eq(host: "localhost", start_timer: Time.at(0))
       end
     end
   end

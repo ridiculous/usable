@@ -76,6 +76,7 @@ module Usable
   end
 
   def extended(base)
+    return if base === self
     base.extend(Usable) unless base.respond_to?(:usables)
     Usable.copy_usables(self, base)
     super
