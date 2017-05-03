@@ -1,3 +1,8 @@
+3.7.2 (unreleased)
+=================
+
+* Fix bug in `Usable::Struct` with string vs symbol keys
+
 3.7.1 (4/3/2016)
 =================
 
