@@ -1,4 +1,4 @@
-3.7.2 (unreleased)
+3.8.0 (5/5/2017)
 =================
 
 * Fix bug in `Usable::Struct` with string vs symbol keys
@@ -6,35 +6,35 @@
 * Improve `Usable::Struct` to also define class accessors for the usables and behave like a hash with `[]` accessors
 * Add `usables.merge! another: 'hash'` to easily update usables with hashes or other objects that respond to `:each`
 
-3.7.1 (4/3/2016)
+3.7.1 (4/3/2017)
 =================
 
 * Fix segfault when extending module that extends self
 
-3.7.0 (3/31/2016)
+3.7.0 (3/31/2017)
 =================
 
 * Usable modules will extend child modules with Usable and then copy their `usables` over (via `extended` and `included` hooks)
 * Slim down files bundled into gem to only core files required
 
-3.6.2 (1/23/2016)
+3.6.2 (1/23/2017)
 =================
 
 * Update Railtie to _always_ freeze Usable _after_ `Rails.application.eager_load!`
 * Add `Usable.logger` to help debugging (default level: `Logger::ERROR`)
 
-3.6.1 (1/23/2016)
+3.6.1 (1/23/2017)
 =================
 
 * Fix issue with trying to modify Usable.extended_constants when freezing Usable because it may eager-load subclasses of a class that extends Usable
 
-3.6.0 (1/19/2016)
+3.6.0 (1/19/2017)
 =================
 
 * NEW - Add Rails setting `usable_config.frozen` to freeze Usable in a after initialize Railtie
 * NEW - Add inherited hook to copy usable config to subclasses
 
-3.5.0 (1/18/2016)
+3.5.0 (1/18/2017)
 =================
 
 * FIX - Can marshal Usable configs
