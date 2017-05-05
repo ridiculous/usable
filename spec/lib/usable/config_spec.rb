@@ -136,6 +136,38 @@ describe Usable::Config do
     end
   end
 
+  describe '#merge' do
+    before do
+      subject.foo { 'bar' }
+      subject.buzz = :ok
+    end
+
+    it 'updates @spec with the given attributes' do
+      expect(subject.buzz).to eq :ok
+      subject.merge!(buzz: :off, dat: 'newnew')
+      expect(subject.buzz).to eq :off
+      expect(subject.dat).to eq 'newnew'
+    end
+
+    it 'does not update lazy loaded values (blocks)' do
+      subject.merge!(foo: nil)
+      expect(subject.foo).to eq 'bar'
+      # Can update after called
+      subject.merge!(foo: nil)
+      expect(subject[:foo]).to eq nil
+    end
+
+    it 'accepts strings and symbols' do
+      subject.merge! 'buzz' => 'meeeeee'
+      expect(subject.buzz).to eq 'meeeeee'
+      expect(subject[:buzz]).to eq 'meeeeee'
+    end
+
+    it 'returns itself' do
+      expect(subject.merge!(buzz: :off)).to be subject
+    end
+  end
+
   describe '#initialize' do
     it 'assigns the given options as specs' do
       subject = described_class.new foo: 'bar'

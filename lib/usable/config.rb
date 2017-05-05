@@ -43,6 +43,14 @@ module Usable
       to_h.merge(other)
     end
 
+    # @param other [Hash] to update ourselves with
+    def merge!(other)
+      other.each do |key, val|
+        @spec[key] = val
+      end
+      self
+    end
+
     def method_missing(key, *args, &block)
       if block
         @lazy_loads << key
