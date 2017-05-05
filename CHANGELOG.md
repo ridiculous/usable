@@ -2,6 +2,7 @@
 =================
 
 * Fix bug in `Usable::Struct` with string vs symbol keys
+* Add `Usable.define_usable_accessors` to define class level accessors for the underlying usables
 
 3.7.1 (4/3/2016)
 =================

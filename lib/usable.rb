@@ -88,6 +88,13 @@ module Usable
     super
   end
 
+  def define_usable_accessors
+    usables.to_h.keys.each do |key|
+      define_singleton_method(key) { usables[key] }
+      define_singleton_method("#{key}=") { |new_val| usables[key] = new_val }
+    end
+  end
+
   def usables
     @usables ||= Config.new
   end

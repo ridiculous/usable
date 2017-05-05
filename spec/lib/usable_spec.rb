@@ -53,6 +53,20 @@ describe Usable do
 
   after(:each) { subject.usables = nil }
 
+  describe '.define_usable_accessors' do
+    it 'allows usables to be read and written on the host class' do
+      expect(subject).to respond_to :define_usable_accessors
+      subject.config do
+        bar :ok
+      end
+      subject.define_usable_accessors
+      expect(subject.bar).to eq :ok
+      subject.bar = :lego
+      expect(subject.bar).to eq :lego
+      expect(subject.usables.bar).to eq :lego
+    end
+  end
+
   describe '.extended' do
     it "adds the base class to it's list of @extended_constants" do
       described_class.extended_constants.clear
