@@ -26,6 +26,18 @@ module Usable
       def each(&block)
         @attrs.each(&block)
       end
+
+      def to_h
+        @attrs.dup
+      end
+
+      alias to_hash to_h
+
+      def merge(other)
+        to_h.merge!(other)
+      end
+
+      alias + merge
     end
   end
 end

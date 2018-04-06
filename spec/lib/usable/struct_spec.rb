@@ -83,5 +83,16 @@ describe 'Usable::Struct()' do
       end
       expect(results).to eq name: 'Ryan', age: 29, contact: false, call_out: :ok
     end
+
+    it 'can be merged with others or a hash w/o changing' do
+      expect {
+        expect({ original: 'hash' }.merge!(subject)).to eq(original: 'hash', name: 'Ryan', age: 29, contact: false, call_out: :ok)
+        expect({ original: 'hash' }.merge(subject)).to eq(original: 'hash', name: 'Ryan', age: 29, contact: false, call_out: :ok)
+        expect(subject.merge({ original: 'hash' })).to eq(original: 'hash', name: 'Ryan', age: 29, contact: false, call_out: :ok)
+        expect(subject + { original: 'hash' }).to eq(original: 'hash', name: 'Ryan', age: 29, contact: false, call_out: :ok)
+        expect(subject.merge(test_string_key.new)).to eq(name: 'Ryan', age: 29, contact: false, call_out: :ok, foo: "bar", buzz: :ok)
+        expect(subject + test_string_key.new).to eq(name: 'Ryan', age: 29, contact: false, call_out: :ok, foo: "bar", buzz: :ok)
+      }.to_not change(subject, :attrs)
+    end
   end
 end
