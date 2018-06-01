@@ -126,7 +126,6 @@ module Usable
     options = args.last.is_a?(Hash) ? args.pop : {}
     only = options.delete(:only)
     extension_method = options.delete(:method)
-    persisted = options.delete(:persisted)
     args.each do |mod|
       ModExtender.new(mod, only: only, method: extension_method).call self
       # Define settings on @usables and on the scoped @usables
@@ -152,13 +151,6 @@ module Usable
       if mod.const_defined?(:ClassMethods, false)
         send :extend, mod.const_get(:ClassMethods, false)
       end
-      if persisted
-        if persisted.is_a?(Hash)
-          usable Persisted, persisted
-        else
-          usable Persisted
-        end
-      end
     end
     self
   end
@@ -169,5 +161,4 @@ module Usable
   end
 end
 
-require 'usable/persisted'
 require 'usable/railtie' if defined?(Rails::Railtie)
