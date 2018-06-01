@@ -1,6 +1,8 @@
 require 'set'
 require 'ostruct'
 require 'delegate'
+require 'fileutils'
+require 'yaml'
 require 'usable/version'
 require 'usable/mod_extender'
 require 'usable/config'
@@ -122,8 +124,11 @@ module Usable
   # @return self
   def usable(*args, &block)
     options = args.last.is_a?(Hash) ? args.pop : {}
+    only = options.delete(:only)
+    extension_method = options.delete(:method)
+    persisted = options.delete(:persisted)
     args.each do |mod|
-      ModExtender.new(mod, only: options.delete(:only), method: options.delete(:method)).call self
+      ModExtender.new(mod, only: only, method: extension_method).call self
       # Define settings on @usables and on the scoped @usables
       scope = Config.new
       if mod.name
@@ -147,6 +152,13 @@ module Usable
       if mod.const_defined?(:ClassMethods, false)
         send :extend, mod.const_get(:ClassMethods, false)
       end
+      if persisted
+        if persisted.is_a?(Hash)
+          usable Persisted, persisted
+        else
+          usable Persisted
+        end
+      end
     end
     self
   end
@@ -157,4 +169,5 @@ module Usable
   end
 end
 
+require 'usable/persisted'
 require 'usable/railtie' if defined?(Rails::Railtie)

@@ -9,5 +9,6 @@ class Usable::Railtie < Rails::Railtie
       require 'usable/eager_load'
       app.class.prepend Usable::EagerLoad
     end
+    Usable::Persisted.usables.dir = Rails.root.join('tmp')
   end
 end
