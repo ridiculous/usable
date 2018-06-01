@@ -54,7 +54,7 @@ describe Usable do
   after(:each) { subject.usables = nil }
 
   describe '.define_usable_accessors' do
-    it 'allows usables to be read and written on the host class' do
+    it 'allows usables to be read/write on host class' do
       expect(subject).to respond_to :define_usable_accessors
       subject.config do
         bar :ok
@@ -64,6 +64,16 @@ describe Usable do
       subject.bar = :lego
       expect(subject.bar).to eq :lego
       expect(subject.usables.bar).to eq :lego
+    end
+
+    it 'allows usables to be read/write on host instance' do
+      subject.config { bar :ok }
+      subject.define_usable_accessors
+      obj = subject.new
+      expect(obj.bar).to eq :ok
+      obj.bar = :lego
+      expect(obj.bar).to eq :lego
+      expect(obj.usables.bar).to eq :lego
     end
   end
 

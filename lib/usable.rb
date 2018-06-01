@@ -90,8 +90,10 @@ module Usable
 
   def define_usable_accessors
     usables.to_h.keys.each do |key|
-      define_singleton_method(key) { usables[key] }
-      define_singleton_method("#{key}=") { |new_val| usables[key] = new_val }
+      define_singleton_method(key) { usables.send(key) }
+      define_singleton_method("#{key}=") { |new_val| usables.send("#{key}=", new_val) }
+      define_method(key) { usables.send(key) }
+      define_method("#{key}=") { |new_val| usables.send("#{key}=", new_val) }
     end
   end
 
