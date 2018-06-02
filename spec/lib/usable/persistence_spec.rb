@@ -1,29 +1,10 @@
 require "spec_helper"
-require "usable/persisted"
+require "usable/persistence"
 
-describe Usable::Persisted do
-  subject { Class.new(super_class) { extend ::Usable::Persisted } }
+describe Usable::Persistence do
+  subject { Class.new(super_class) { extend ::Usable::Persistence } }
 
   let(:super_class) { Class.new }
-  let(:mod) do
-    Module.new do
-      def versions
-        "Saving #{usables.max_versions} versions to #{usables.table_name} table"
-      end
-
-      def destroy_version
-        "destroying version"
-      end
-
-      def latest_version
-        'here i am'
-      end
-
-      const_set :TEST_CONST, 1
-      const_set :InnerTestClass, Class.new
-    end
-  end
-
   let(:config_file) { "#{config_dir}/testclass.yml" }
   let(:config_dir) { File.expand_path('../../../../lib/usable', __FILE__) }
 
@@ -38,7 +19,6 @@ describe Usable::Persisted do
   end
 
   it 'sets uses the custom directory' do
-    subject.usable mod, persisted: true
     subject.new.random = 101
     expect(subject.new._config_file).to match %r|usable/lib/usable/testclass\.yml|
   end

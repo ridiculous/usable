@@ -1,8 +1,6 @@
 require 'set'
 require 'ostruct'
 require 'delegate'
-require 'fileutils'
-require 'yaml'
 require 'usable/version'
 require 'usable/mod_extender'
 require 'usable/config'

@@ -1,5 +1,8 @@
+require 'fileutils'
+require 'yaml'
+
 module Usable
-  module Persisted
+  module Persistence
     # = Stores usables in a yaml file
 
     extend Usable
