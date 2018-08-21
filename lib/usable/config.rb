@@ -67,10 +67,10 @@ module Usable
             # Cleanup, just in case we loaded it another way (e.g. combining with another usable config)
             @lazy_loads.delete key
           else
-            @spec[key] = call_spec_method(key)
+            @spec[key] = call_spec_method(key) unless frozen?
           end
           # Define method so we don't hit method missing again
-          define_singleton_method(key) { @spec[key] }
+          define_singleton_method(key) { @spec[key] } unless frozen?
           @spec[key]
         else
           @spec[key] = args.first
