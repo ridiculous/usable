@@ -1,3 +1,9 @@
+3.9.0 (8/20/2018)
+=================
+
+* Add `Usables#include?` to check whether the config has a requested key
+* Fix bug when calling an unknown attribute on a frozen usable results in an exception (e.g. "can't modify frozen OpenStruct")
+
 3.8.0 (5/5/2017)
 =================
 
