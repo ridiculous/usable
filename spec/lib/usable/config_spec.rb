@@ -237,4 +237,57 @@ describe Usable::Config do
       expect(subject.foo).to eq 'bar'
     end
   end
+
+  describe 'include?' do
+    before do
+      subject.baz = :buzz
+      subject.lazy_foo { 'bar' }
+    end
+
+    it 'returns boolean depending on whether the @spec contains the key' do
+      expect(subject.include?(:baz)).to eq true
+      expect(subject.include?(:brazen)).to eq false
+    end
+
+    it 'accepts strings or symbols' do
+      expect(subject.include?('baz')).to eq true
+      expect(subject.include?(:baz)).to eq true
+    end
+
+    it 'works with lazy loaded attrs' do
+      expect(subject.include?('lazy_foo')).to eq true
+      expect(subject.include?(:lazy_foo)).to eq true
+    end
+
+    context 'works when frozen' do
+      before { subject.freeze }
+
+      it 'returns boolean depending on whether the @spec contains the key' do
+        expect(subject.include?(:baz)).to eq true
+        expect(subject.include?(:brazen)).to eq false
+      end
+
+      it 'accepts strings or symbols' do
+        expect(subject.include?('baz')).to eq true
+        expect(subject.include?(:baz)).to eq true
+      end
+
+      it 'works with lazy loaded attrs' do
+        expect(subject.include?('lazy_foo')).to eq true
+        expect(subject.include?(:lazy_foo)).to eq true
+      end
+    end
+  end
+
+  describe 'calling unknown attribute when frozen' do
+    before do
+      subject.foo { 'bar' }
+      subject.freeze
+    end
+
+    it 'returns nil' do
+      expect(subject.foo).to eq 'bar'
+      expect(subject.brazen).to eq nil
+    end
+  end
 end

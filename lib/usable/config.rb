@@ -51,6 +51,10 @@ module Usable
       self
     end
 
+    def include?(key)
+      !!@spec[key] || @lazy_loads.include?(key.to_sym)
+    end
+
     def method_missing(key, *args, &block)
       if block
         @lazy_loads << key
