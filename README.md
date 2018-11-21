@@ -192,6 +192,16 @@ User.usables.human.speak # => "Hello"
 User.usables.robot.speak # => "beep bop"
 ```
 
+## Persisted Defaults
+
+Stores usables to a yaml file, so config can be reloaded in subsequent sessions. Useful for setting some defaults to work with locally.
+
+```ruby
+class User
+  extend Usable::Persistence
+end
+```
+
 ## Production
 
 When running in production you may want to eager-load any lazily defined attributes and freeze them, ensuring thread safety.

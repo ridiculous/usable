@@ -2,6 +2,7 @@
 =================
 
 * Add `Usables#include?` to check whether the config has a requested key
+* Add `Usable::Persistence` module to turn a class/mod into a usable struct backed by a YAML file
 * Fix bug when calling an unknown attribute on a frozen usable results in an exception (e.g. "can't modify frozen OpenStruct")
 
 3.8.0 (5/5/2017)
