@@ -1,4 +1,4 @@
-3.9.1
+3.9.1 (11/23/2018)
 =================
 
 * Fix issue with overriding default usable defined with a block, when mounting with an options hash (#16)
