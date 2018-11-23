@@ -118,6 +118,50 @@ describe Usable::Config do
           subject.to_h
           expect(subject.instance_variable_get(:@lazy_loads)).to be_empty
         end
+
+        context 'when combined with other usables that override it with an options hash' do
+          let(:klass) { Class.new { extend Usable } }
+          before do
+            mod.extend Usable
+            mod.config do
+              host { 'local' }
+            end
+            klass.usable mod, host: 'prod'
+          end
+
+          it 'returns the overridden value of the new usable' do
+            expect(klass.usables.to_h).to eq :host => 'prod'
+            expect(klass.usables.host).to eq 'prod'
+          end
+
+          it 'does not modify source module' do
+            expect(mod.usables.to_h).to eq :host => 'local'
+            expect(mod.usables.host).to eq 'local'
+          end
+        end
+
+        context 'when combined with other usables that override it with a block' do
+          let(:klass) { Class.new { extend Usable } }
+          before do
+            mod.extend Usable
+            mod.config do
+              host { 'local' }
+            end
+            klass.usable mod do
+              host { 'prod' }
+            end
+          end
+
+          it 'returns the overridden value of the new usable' do
+            expect(klass.usables.to_h).to eq :host => 'prod'
+            expect(klass.usables.host).to eq 'prod'
+          end
+
+          it 'does not modify source module' do
+            expect(mod.usables.to_h).to eq :host => 'local'
+            expect(mod.usables.host).to eq 'local'
+          end
+        end
       end
     end
   end

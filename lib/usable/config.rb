@@ -30,8 +30,12 @@ module Usable
       @spec.to_h.each(&block)
     end
 
+    # @note The @spec[key] could already be set in cases where the config was merged with another
+    #   For example, a usable module defines a default with a block, and when mounting the module
+    #   the same usable option is overridden as an options hash (usable mod, key: 'val')
     def to_h
-      @lazy_loads.each { |key| @spec[key] = call_spec_method(key) }
+      @lazy_loads.each { |key| @spec[key] ||= @spec.public_send(key) }
+      @lazy_loads.clear
       @spec.to_h
     end
 
@@ -58,7 +62,7 @@ module Usable
     def method_missing(key, *args, &block)
       if block
         @lazy_loads << key
-        @spec.define_singleton_method(key) { yield }
+        @spec.define_singleton_method(key, &block)
       else
         # Needs to be a symbol so we can consistently access @lazy_loads
         key = key.to_s.tr('=', '').to_sym
