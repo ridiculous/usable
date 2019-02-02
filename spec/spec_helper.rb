@@ -12,7 +12,7 @@ begin
 rescue LoadError
   nil
 end
-
+Usable.logger.level = 0
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   # config.filter_run focus: true
