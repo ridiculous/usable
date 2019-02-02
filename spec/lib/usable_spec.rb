@@ -316,6 +316,26 @@ describe Usable do
           expect(subject.new.from_instance_mod).to eq 'defined as instance method'
         end
       end
+
+      context 'when the specified method is defined on an ancestor' do
+        before { mod.include instance_mod }
+
+        it 'does not copy the method to the target' do
+          subject.usable mod, only: :latest_version
+          expect(subject.new).to_not respond_to(:from_instance_mod)
+        end
+
+        context 'when also defined directly' do
+          before do
+            mod.class_eval 'def from_instance_mod() end'
+          end
+
+          it 'does not copy the method to the target' do
+            subject.usable mod, only: :latest_version
+            expect(subject.new).to_not respond_to(:from_instance_mod)
+          end
+        end
+      end
     end
 
     context 'when the given module has defined a +usables+' do
