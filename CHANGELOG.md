@@ -1,3 +1,8 @@
+3.9.2 (2/1/2018)
+=================
+
+* Fix :only option with superclass methods, allowing them to be removed correctly (#17)
+
 3.9.1 (11/23/2018)
 =================
 
