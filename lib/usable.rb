@@ -128,7 +128,8 @@ module Usable
       ModExtender.new(mod, only: only, method: extension_method).call self
       # Define settings on @usables and on the scoped @usables
       scope = Config.new
-      if mod.name
+      # Nest the new config under a namespace based on it's name, unless it's the default name we gave
+      if mod.name && !mod.name.include?("UsableMod")
         scope_name = mod.name.split('::').last.gsub(/\B([A-Z])([a-z_0-9])/, '_\1\2').downcase
         usables[scope_name] = scope
       end
