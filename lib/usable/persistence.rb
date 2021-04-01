@@ -68,7 +68,8 @@ module Usable
       def _config_file
         return @_config_file if @_config_file
         FileUtils.mkdir_p(usables.dir) unless File.directory?(usables.dir)
-        @_config_file = File.join(usables.dir, "#{self.class.name.downcase.gsub('::', '_')}.yml")
+        filename = self.class.name ? self.class.name.downcase.gsub('::', '_') : 'usable'
+        @_config_file = File.join(usables.dir, "#{filename}.yml")
         FileUtils.touch(@_config_file) unless File.exists?(@_config_file)
         @_config_file
       end

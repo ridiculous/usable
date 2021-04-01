@@ -40,4 +40,15 @@ describe Usable::Persistence do
       subject.new.random = 101
     }.to change { subject.new.has?(:random) }.from(false).to(true)
   end
+
+  context 'Anonymous class extension' do
+    let(:config_file) { "#{config_dir}/usable.yml" }
+
+    it 'works just as well with anonymous classes' do
+      anon = Class.new { extend ::Usable::Persistence }.new
+      anon.random = 290
+      expect(anon.random).to eq 290
+      expect(anon._config_file).to include("usable/lib/usable/usable.yml")
+    end
+  end
 end
