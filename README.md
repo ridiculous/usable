@@ -197,8 +197,18 @@ User.usables.robot.speak # => "beep bop"
 Stores usables to a yaml file, so config can be reloaded in subsequent sessions. Useful for setting some defaults to work with locally.
 
 ```ruby
-class User
-  extend Usable::Persistence
+begin
+  require "usable"
+  require "usable/persistence"
+  # Stores commonly used variables across console sessions
+  # e.g.
+  # > oo.guide = Guide.last
+  # > oo.guide
+  def oo
+    @oo ||= Class.new { extend Usable::Persistence }.new
+  end
+rescue LoadError
+  puts "[INFO] Couldn't load `usable` gem. The helper method `oo` is unavailable for this session."
 end
 ```
 
