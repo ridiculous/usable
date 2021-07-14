@@ -53,7 +53,7 @@ module Usable
       base.instance_eval do
         def config(&block)
           if block
-            usables.instance_eval &block
+            usables.instance_eval(&block)
           else
             usables
           end
@@ -142,7 +142,7 @@ module Usable
         [scope, usables].each { |x| options.each { |k, v| x[k] = v } }
       end
       if block_given?
-        [scope, usables].each { |x| x.instance_eval &block }
+        [scope, usables].each { |x| x.instance_eval(&block) }
       end
       if mod.const_defined?(:InstanceMethods, false)
         send :include, mod.const_get(:InstanceMethods, false)
