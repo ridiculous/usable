@@ -115,17 +115,15 @@ module Usable
   #   end
   #
   # @note Hides methods
-  # @param [Module] mod
+  # @param [Array<Module>] args - array of modules to potentially modify the and then include
   # @param [Hash] options Customize the extension of the module as well as define config settings on the target
   # @option [Array,Symbol]  :only Limit which methods are copied from the module
   # @option [String,Symbol] :method (:include) The method to use for including the module
+  # @option [Array<Symbol>] :except List of methods to exclude from the given module(s)
   # @return self
-  def usable(*args, &block)
-    options = args.last.is_a?(Hash) ? args.pop : {}
-    only = options.delete(:only)
-    extension_method = options.delete(:method)
+  def usable(*args, only: nil, except: nil, method: nil, **options, &block)
     args.each do |mod|
-      ModExtender.new(mod, only: only, method: extension_method).call self
+      ModExtender.new(mod, only: only, method: method, except: except).call self
       # Define settings on @usables and on the scoped @usables
       scope = Config.new
       # Nest the new config under a namespace based on it's name, unless it's the default name we gave

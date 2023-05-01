@@ -9,7 +9,7 @@ module Usable
       @options[:method] ||= :include
       @copy = mod
       @name = mod.name
-      @unwanted = find_unwanted_methods(options[:only])
+      @unwanted = (options[:except] && Array(options[:except])) || find_unwanted_methods(options[:only])
       if @unwanted.any?
         @copy = @copy.dup
       end

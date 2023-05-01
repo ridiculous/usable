@@ -1,4 +1,10 @@
-3.9.2 (2/1/2018)
+3.10.0 (5/1/2023)
+=================
+
+* Add `:except` option to filter out unwanted methods
+* Require at least **Ruby 2.7** and use keyword args for `usable`
+
+* 3.9.2 (2/1/2018)
 =================
 
 * Fix :only option with superclass methods, allowing them to be removed correctly (#17)

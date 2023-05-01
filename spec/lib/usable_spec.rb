@@ -261,6 +261,25 @@ describe Usable do
       end
     end
 
+    context "when given the :except option" do
+      it "defines the module without the specified method" do
+        expect(subject.new).to_not respond_to :destroy_version
+        subject.usable mod, except: :destroy_version
+        expect(subject.new).to_not respond_to :destroy_version
+      end
+
+      it "defines the module without the specified methods" do
+        expect(subject.new).to_not respond_to :versions
+        expect(subject.new).to_not respond_to :latest_version
+        expect(subject.new).to_not respond_to :destroy_version
+        subject.usable mod, except: [:destroy_version, :latest_version]
+        expect(subject.new).to_not respond_to :destroy_version
+        expect(subject.new).to_not respond_to :latest_version
+        expect(subject.new).to respond_to :versions
+        expect(subject.new.versions).to eq "Saving  versions to  table"
+      end
+    end
+
     context 'when given the :only option' do
       it 'defines the specified method' do
         subject.usable mod, only: :destroy_version

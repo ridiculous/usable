@@ -19,10 +19,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = '>= 2.0.0'
+  spec.required_ruby_version = '>= 2.7.0'
 
-  spec.add_development_dependency "bundler", "~> 2.2.11"
+  spec.add_development_dependency "bundler", "~> 2.3"
   spec.add_development_dependency "rake", ">= 12.3.3"
   spec.add_development_dependency "rspec", ">= 3.2", "< 4"
-  # spec.add_development_dependency 'rspec-scaffold', '>= 1.0', '< 2'
 end
