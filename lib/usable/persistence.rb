@@ -29,7 +29,7 @@ module Usable
         elsif usables[name]
           usables[name]
         elsif _config[name]
-          usables[name] = if _config[name].is_a?(Hash)
+          usables[name] = if _config[name].is_a?(Hash) && _config[name].key?(:class)
                             _config[name].fetch(:class).constantize.find(_config[name].fetch(:id))
                           else
                             _config[name]

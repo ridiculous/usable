@@ -207,6 +207,11 @@ begin
   def oo
     @oo ||= Class.new { extend Usable::Persistence }.new
   end
+
+  # Define previously stored keys on the top level binding
+  oo._config.keys.each do |key|
+    define_singleton_method(key) { oo.send(key) }
+  end
 rescue LoadError
   puts "[INFO] Couldn't load `usable` gem. The helper method `oo` is unavailable for this session."
 end
