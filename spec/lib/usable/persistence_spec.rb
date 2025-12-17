@@ -26,7 +26,7 @@ describe Usable::Persistence do
   it 'persists usables the YAML file specified in the options' do
     expect {
       subject.new.random = 101
-    }.to change { File.exists?(config_file) }.from(false).to(true)
+    }.to change { File.exist?(config_file) }.from(false).to(true)
   end
 
   it "saves values to the object's usables" do

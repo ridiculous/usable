@@ -42,7 +42,7 @@ module Usable
       def has?(setting)
         !!send(setting)
       rescue NoMethodError => e
-        if e.message.include?("method `#{setting}'")
+        if ["method `#{setting}'", "method '#{setting}'"].any? { |msg| e.message.include?(msg) }
           false
         else
           raise
@@ -70,7 +70,7 @@ module Usable
         FileUtils.mkdir_p(usables.dir) unless File.directory?(usables.dir)
         filename = self.class.name ? self.class.name.downcase.gsub('::', '_') : 'usable'
         @_config_file = File.join(usables.dir, "#{filename}.yml")
-        FileUtils.touch(@_config_file) unless File.exists?(@_config_file)
+        FileUtils.touch(@_config_file) unless File.exist?(@_config_file)
         @_config_file
       end
 
